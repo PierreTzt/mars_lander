@@ -438,8 +438,8 @@ class MarsLanderPro:
     def _save_model(self):
         """Sauvegarde le modele"""
         self.pytorch_agent.save("historique/pytorch_model.pth")
-        self.ia_classic.save_q_table()
-        print("[Save] Modeles sauvegardes")
+        # Note: ia_classic n'a pas de methode save_q_table dans cette version
+        print("[Save] Modele PyTorch sauvegarde")
 
     def _update(self):
         """Mise a jour du jeu"""
@@ -463,7 +463,7 @@ class MarsLanderPro:
                 # Mise a jour stats
                 success = self.vessel.est_pose
 
-                # Coordonnees ecran pour particules (Y non inverse car monde Y=0 en haut)
+                # Coordonnees ecran pour particules
                 px = self.vessel.x * WINDOW_WIDTH / self.fenX
                 py = self.vessel.y * WINDOW_HEIGHT / self.fenY
 
@@ -603,7 +603,8 @@ class MarsLanderPro:
         # Utiliser les points de la surface mars
         terrain_points = []
         for x, y in self.surface.mars_surface:
-            # Convertir en coordonnees ecran (Y non inverse)
+            # Conversion simple: coordonnees monde vers ecran
+            # y=0 est en haut dans les deux systemes
             screen_x = x * WINDOW_WIDTH / self.fenX
             screen_y = y * WINDOW_HEIGHT / self.fenY
             terrain_points.append((screen_x, screen_y))
@@ -611,10 +612,10 @@ class MarsLanderPro:
         if len(terrain_points) > 1:
             # Ajouter les coins pour le remplissage (du terrain vers le bas de l'ecran)
             fill_points = terrain_points + [(WINDOW_WIDTH, WINDOW_HEIGHT), (0, WINDOW_HEIGHT)]
-            pygame.draw.polygon(self.screen, (60, 40, 30), fill_points)
+            pygame.draw.polygon(self.screen, (139, 90, 43), fill_points)  # Marron Mars
 
-            # Contour
-            pygame.draw.lines(self.screen, (150, 100, 70), False, terrain_points, 3)
+            # Contour plus visible
+            pygame.draw.lines(self.screen, (200, 150, 100), False, terrain_points, 4)
 
     def _draw_landing_zone(self):
         """Dessine la zone d'atterrissage"""
@@ -626,7 +627,7 @@ class MarsLanderPro:
         zone_x1, zone_y = zone[0]
         zone_x2, _ = zone[1]
 
-        # Convertir en coordonnees ecran (Y non inverse)
+        # Convertir en coordonnees ecran (meme formule que terrain)
         screen_x1 = zone_x1 * WINDOW_WIDTH / self.fenX
         screen_x2 = zone_x2 * WINDOW_WIDTH / self.fenX
         screen_y = zone_y * WINDOW_HEIGHT / self.fenY
@@ -635,11 +636,11 @@ class MarsLanderPro:
         pulse = (math.sin(time.time() * 3) + 1) / 2
         color = (int(50 + pulse * 50), int(200 + pulse * 55), int(100 + pulse * 50))
 
-        pygame.draw.line(self.screen, color, (screen_x1, screen_y), (screen_x2, screen_y), 5)
+        pygame.draw.line(self.screen, color, (screen_x1, screen_y), (screen_x2, screen_y), 6)
 
         # Marqueurs
         for x in [screen_x1, screen_x2]:
-            pygame.draw.circle(self.screen, color, (int(x), int(screen_y)), 8)
+            pygame.draw.circle(self.screen, color, (int(x), int(screen_y)), 10)
 
     def _draw_ui(self):
         """Dessine l'interface"""
