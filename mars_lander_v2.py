@@ -134,13 +134,25 @@ def main():
     s = Surface(scenar['surface_mars'])
     a = Affichage()
     j = Jeu(scenar)
-    ia = IALearning()
 
     # Zone d'atterrissage
     zone = s.calcul_zone_atterissage(scenar)
     a.init_terrain(scenar['surface_mars'], zone)
     a.set_landing_zone(zone)
-    j.toutes_actions_possibles(v)
+
+    # Actions possibles pour l'IA
+    toutes_actions_possible = j.toutes_actions_possibles(v)
+
+    # Agent Q-Learning
+    ia = IALearning(
+        scenar,
+        toutes_actions_possible,
+        alpha,
+        gamma,
+        epsilon,
+        epsilon_decay,
+        ia_active
+    )
 
     # =========================================================================
     # INITIALISATION DES NOUVEAUX SYSTÈMES
