@@ -27,6 +27,7 @@ import datetime
 import pickle
 import random
 import math
+import time
 
 import pygame
 
@@ -432,6 +433,10 @@ def main():
     last_destroyed_state = False
     last_landed_state = False
 
+    # Timer pour afficher le vaisseau après atterrissage/crash
+    terminal_time = None  # Moment où le vaisseau s'est posé/crashé
+    LANDING_DELAY = 2.0   # Délai en secondes avant de relancer
+
     # Anti-rebond pour les touches de configuration
     s_key_released = True
     v_key_released = True
@@ -550,6 +555,7 @@ def main():
                 # Reset des états
                 last_destroyed_state = False
                 last_landed_state = False
+                terminal_time = None  # Réinitialiser le timer
                 replay.start_recording()
 
                 print(f"Scénario changé: {scenario_names[i]}")
@@ -594,6 +600,7 @@ def main():
             ia.episodes_count += 1
             last_destroyed_state = False
             last_landed_state = False
+            terminal_time = None  # Réinitialiser le timer
             replay.start_recording()
 
         # --- CONTRÔLE DU VAISSEAU ---
@@ -658,10 +665,12 @@ def main():
             sound.play_explosion()
             sound.stop_all()  # Arrêter le son de propulsion
             replay.end_recording(False, 0)
+            terminal_time = time.time()  # Enregistrer le moment du crash
         if v.est_pose and not last_landed_state:
             sound.play_success()
             sound.stop_all()
             replay.end_recording(True, v.fuel)
+            terminal_time = time.time()  # Enregistrer le moment de l'atterrissage
 
         last_destroyed_state = v.detruit
         last_landed_state = v.est_pose
@@ -716,25 +725,28 @@ def main():
                 print(" | ".join(espion_parts))
 
         # --- RELANCE AUTOMATIQUE EN MODE IA ---
-        # Quand un épisode se termine, recommencer automatiquement
+        # Quand un épisode se termine, attendre un délai puis recommencer
         if is_terminal and ia_active:
-            ia.end_episode()  # Enregistrer les stats de l'épisode
-            ia.episodes_count += 1
-            v = j.je_relance_le_jeu(v)
+            # Attendre le délai pour voir le vaisseau posé/crashé
+            if terminal_time is not None and (time.time() - terminal_time) >= LANDING_DELAY:
+                ia.end_episode()  # Enregistrer les stats de l'épisode
+                ia.episodes_count += 1
+                v = j.je_relance_le_jeu(v)
 
-            # Réinitialiser pour le nouvel épisode
-            last_destroyed_state = False
-            last_landed_state = False
-            replay.start_recording()
+                # Réinitialiser pour le nouvel épisode
+                last_destroyed_state = False
+                last_landed_state = False
+                terminal_time = None  # Réinitialiser le timer
+                replay.start_recording()
 
-            # Afficher les statistiques tous les 100 épisodes
-            if ia.episodes_count % 100 == 0:
-                stats = ia.get_stats()
-                print(f"Episode {stats['episodes']} | "
-                      f"Réussites: {stats['successful_landings']} | "
-                      f"Taux: {stats['success_rate']:.2%} | "
-                      f"Epsilon: {stats['epsilon']:.4f} | "
-                      f"Q-Table: {stats['q_table_size']}")
+                # Afficher les statistiques tous les 100 épisodes
+                if ia.episodes_count % 100 == 0:
+                    stats = ia.get_stats()
+                    print(f"Episode {stats['episodes']} | "
+                          f"Réussites: {stats['successful_landings']} | "
+                          f"Taux: {stats['success_rate']:.2%} | "
+                          f"Epsilon: {stats['epsilon']:.4f} | "
+                          f"Q-Table: {stats['q_table_size']}")
 
     # =========================================================================
     # FIN DU JEU - NETTOYAGE ET SAUVEGARDE
