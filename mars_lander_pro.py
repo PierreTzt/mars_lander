@@ -174,21 +174,15 @@ class MarsLanderPro:
     """
 
     def __init__(self):
-        print("")
-        print("=" * 60)
-        print("  MARS LANDER - ULTIMATE PRO EDITION")
-        print("  PyTorch DQN + Graphiques Temps Reel")
-        print("=" * 60)
-        print("")
-        print("  Idee originale: Florent Lannois")
-        print("  En hommage a sa creativite et son inspiration")
-        print("")
-        print("=" * 60)
-
         # Fenetre principale
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Mars Lander - ULTIMATE PRO Edition")
         self.clock = pygame.time.Clock()
+
+        # Afficher le splash screen
+        self._show_splash_screen()
+
+        print("[Game] Initialisation...")
 
         # Etat du jeu
         self.running = True
@@ -304,6 +298,117 @@ class MarsLanderPro:
         self.terminal_time = None
 
         print("[Game] OK")
+
+    def _show_splash_screen(self):
+        """Affiche un splash screen avec hommage a Florent"""
+        # Generer des etoiles pour le fond
+        stars = [(random.randint(0, WINDOW_WIDTH), random.randint(0, WINDOW_HEIGHT),
+                  random.randint(1, 3), random.randint(150, 255)) for _ in range(200)]
+
+        # Polices
+        font_title = pygame.font.Font(None, 72)
+        font_subtitle = pygame.font.Font(None, 36)
+        font_credits = pygame.font.Font(None, 28)
+        font_small = pygame.font.Font(None, 22)
+
+        # Animation de 4 secondes
+        start_time = time.time()
+        duration = 4.0
+
+        while time.time() - start_time < duration:
+            # Gerer les evenements (pour pouvoir fermer)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    # Skip avec n'importe quelle touche
+                    return
+
+            elapsed = time.time() - start_time
+            progress = elapsed / duration
+
+            # Fond noir
+            self.screen.fill((5, 5, 15))
+
+            # Dessiner les etoiles avec scintillement
+            for x, y, size, brightness in stars:
+                twinkle = int(brightness * (0.7 + 0.3 * math.sin(elapsed * 3 + x)))
+                color = (twinkle, twinkle, twinkle)
+                if size == 1:
+                    self.screen.set_at((x, y), color)
+                else:
+                    pygame.draw.circle(self.screen, color, (x, y), size)
+
+            # Calcul des alphas pour le fade in/out
+            if progress < 0.2:
+                alpha = int(255 * (progress / 0.2))
+            elif progress > 0.8:
+                alpha = int(255 * ((1 - progress) / 0.2))
+            else:
+                alpha = 255
+
+            # Titre principal
+            title_text = font_title.render("MARS LANDER", True, (255, 150, 50))
+            title_rect = title_text.get_rect(center=(WINDOW_WIDTH // 2, 200))
+            title_surface = pygame.Surface(title_text.get_size(), pygame.SRCALPHA)
+            title_surface.fill((255, 255, 255, alpha))
+            title_surface.blit(title_text, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+            self.screen.blit(title_surface, title_rect)
+
+            # Sous-titre
+            subtitle_text = font_subtitle.render("ULTIMATE PRO EDITION", True, (100, 200, 255))
+            subtitle_rect = subtitle_text.get_rect(center=(WINDOW_WIDTH // 2, 260))
+            subtitle_surface = pygame.Surface(subtitle_text.get_size(), pygame.SRCALPHA)
+            subtitle_surface.fill((255, 255, 255, alpha))
+            subtitle_surface.blit(subtitle_text, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+            self.screen.blit(subtitle_surface, subtitle_rect)
+
+            # Separateur
+            sep_alpha = alpha
+            pygame.draw.line(self.screen, (100, 100, 100, sep_alpha),
+                           (WINDOW_WIDTH // 2 - 200, 320), (WINDOW_WIDTH // 2 + 200, 320), 2)
+
+            # Hommage a Florent
+            tribute_lines = [
+                "Idee originale",
+                "FLORENT LANNOIS",
+                "",
+                "En hommage a sa creativite",
+                "et son inspiration"
+            ]
+
+            y_offset = 380
+            for i, line in enumerate(tribute_lines):
+                if line == "FLORENT LANNOIS":
+                    text = font_subtitle.render(line, True, (255, 215, 0))  # Or
+                elif line == "":
+                    y_offset += 10
+                    continue
+                else:
+                    text = font_credits.render(line, True, (200, 200, 200))
+
+                text_rect = text.get_rect(center=(WINDOW_WIDTH // 2, y_offset))
+                text_surface = pygame.Surface(text.get_size(), pygame.SRCALPHA)
+                text_surface.fill((255, 255, 255, alpha))
+                text_surface.blit(text, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                self.screen.blit(text_surface, text_rect)
+                y_offset += 35
+
+            # Credits en bas
+            credits_text = font_small.render("Developpement: Pierre Touzet  |  IA: Claude (Anthropic)", True, (120, 120, 120))
+            credits_rect = credits_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 50))
+            self.screen.blit(credits_text, credits_rect)
+
+            # Indication pour skip
+            if progress > 0.5:
+                skip_alpha = int(128 * math.sin(elapsed * 4))
+                skip_text = font_small.render("Appuyez sur une touche pour continuer...", True, (150, 150, 150))
+                skip_rect = skip_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 80))
+                self.screen.blit(skip_text, skip_rect)
+
+            pygame.display.flip()
+            self.clock.tick(60)
 
     def _reset_vessel(self):
         """Reinitialise le vaisseau"""
