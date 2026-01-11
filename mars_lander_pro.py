@@ -24,6 +24,8 @@ from typing import Optional, Tuple
 
 # Imports des modules du projet
 import data as data_module
+from data import scenario0, scenario1, scenario2, scenario3, scenario4, scenario5
+from data import fenX, fenY, echelle, alpha, gamma, epsilon, epsilon_decay
 from vaisseau import Vaisseau
 from surface import Surface
 from jeu import Jeu
@@ -255,17 +257,6 @@ class MarsLanderPro:
         # Tentative de chargement d'un modele existant
         self.pytorch_agent.load("historique/pytorch_model.pth")
 
-        # IA Q-Learning classique (backup)
-        self.ia_classic = IALearning(
-            data_module.scenar,
-            data_module.toutes_actions_possibles,
-            data_module.alpha,
-            data_module.gamma,
-            data_module.epsilon,
-            data_module.epsilon_decay,
-            data_module.ia_active
-        )
-
         print(f"[AI] PyTorch device: {self.pytorch_agent.get_stats()['device']}")
         print("[AI] OK")
 
@@ -273,33 +264,38 @@ class MarsLanderPro:
         """Initialise le jeu"""
         print("[Game] Initialisation du scenario...")
 
-        self.echelle = data_module.echelle
-        self.fenX = data_module.fenX
-        self.fenY = data_module.fenY
+        # Scenario actuel
+        self.scenar = scenario0
+        self.scenarios = [scenario0, scenario1, scenario2, scenario3, scenario4, scenario5]
+        self.current_scenario = 0
 
-        self.surface = Surface()
+        # Parametres d'affichage
+        self.echelle = echelle
+        self.fenX = fenX
+        self.fenY = fenY
+
+        # Initialisation des composants
+        self.vessel = Vaisseau()
+        self.vessel.init_vaisseau(self.scenar['vaisseau'])
+
+        self.surface = Surface(self.scenar['surface_mars'])
         self.affichage = Affichage()
-        self.jeu = Jeu(
-            data_module.gravite,
-            data_module.puissance_moteur,
-            data_module.consommation,
-            data_module.vitesse_rotation
-        )
+        self.jeu = Jeu(self.scenar)
 
-        self._reset_vessel()
+        # Zone d'atterrissage
+        self.zone = self.surface.calcul_zone_atterissage(self.scenar)
+        self.affichage.init_terrain(self.scenar['surface_mars'], self.zone)
+
+        # IA Q-Learning classique (backup)
+        toutes_actions = self.jeu.toutes_actions_possibles(self.vessel)
+        self.ia_classic = IALearning(self.scenar, toutes_actions, alpha, gamma, epsilon, epsilon_decay, True)
+
         print("[Game] OK")
 
     def _reset_vessel(self):
         """Reinitialise le vaisseau"""
-        self.vessel = Vaisseau(
-            data_module.scenar['x'] * self.echelle,
-            data_module.scenar['y'] * self.echelle,
-            data_module.scenar['h_speed'],
-            data_module.scenar['v_speed'],
-            data_module.scenar['fuel'],
-            data_module.scenar['angle'],
-            data_module.scenar['power']
-        )
+        self.vessel = Vaisseau()
+        self.vessel.init_vaisseau(self.scenar['vaisseau'])
 
         self.episode_reward = 0
         self.episode_steps = 0
@@ -308,8 +304,8 @@ class MarsLanderPro:
     def _get_state(self) -> Tuple:
         """Recupere l'etat actuel pour l'IA"""
         # Position
-        x = self.vessel.x / self.echelle
-        y = self.vessel.y / self.echelle
+        x = self.vessel.x
+        y = self.vessel.y
 
         # Vitesses
         h_speed = self.vessel.h_speed
@@ -320,10 +316,11 @@ class MarsLanderPro:
         angle = self.vessel.angle
 
         # Distance a la zone d'atterrissage
-        zone_start = self.surface.zone_atterissage[0]
-        zone_end = self.surface.zone_atterissage[1]
-        zone_center = (zone_start + zone_end) / 2
-        zone_y = self.surface.sol[int(zone_center)]
+        zone = self.surface.atterissage
+        zone_x1 = zone[0][0]
+        zone_x2 = zone[1][0]
+        zone_y = zone[0][1]
+        zone_center = (zone_x1 + zone_x2) / 2
 
         dist_zone = abs(x - zone_center)
         alt_zone = y - zone_y
@@ -335,18 +332,19 @@ class MarsLanderPro:
         reward = 0
 
         # Position par rapport a la zone
-        x = self.vessel.x / self.echelle
-        y = self.vessel.y / self.echelle
-        zone_start = self.surface.zone_atterissage[0]
-        zone_end = self.surface.zone_atterissage[1]
-        zone_center = (zone_start + zone_end) / 2
+        x = self.vessel.x
+        y = self.vessel.y
+        zone = self.surface.atterissage
+        zone_x1 = zone[0][0]
+        zone_x2 = zone[1][0]
+        zone_center = (zone_x1 + zone_x2) / 2
 
         # Reward shaping
         dist_to_zone = abs(x - zone_center)
         reward -= dist_to_zone * 0.001  # Penalite pour distance
 
         # Bonus pour etre au-dessus de la zone
-        if zone_start <= x <= zone_end:
+        if zone_x1 <= x <= zone_x2:
             reward += 1
 
         # Penalite pour vitesse excessive
@@ -417,10 +415,13 @@ class MarsLanderPro:
 
     def _change_scenario(self, num: int):
         """Change le scenario"""
-        scenarios = ['scenario1', 'scenario2', 'scenario3', 'scenario4', 'scenario5', 'scenario6']
-        if num < len(scenarios):
-            data_module.scenar = getattr(data_module, scenarios[num])
-            self.surface = Surface()
+        if num < len(self.scenarios):
+            self.current_scenario = num
+            self.scenar = self.scenarios[num]
+            self.surface = Surface(self.scenar['surface_mars'])
+            self.zone = self.surface.calcul_zone_atterissage(self.scenar)
+            self.affichage.init_terrain(self.scenar['surface_mars'], self.zone)
+            self.jeu = Jeu(self.scenar)
             self._reset_vessel()
             print(f"[Game] Scenario {num + 1} charge")
 
@@ -457,27 +458,23 @@ class MarsLanderPro:
                 # Mise a jour stats
                 success = self.vessel.est_pose
 
+                # Coordonnees ecran pour particules
+                px = self.vessel.x * WINDOW_WIDTH / self.fenX
+                py = WINDOW_HEIGHT - (self.vessel.y * WINDOW_HEIGHT / self.fenY)
+
                 if success:
                     self.stats.total_landings += 1
                     self.stats.current_streak += 1
                     self.stats.best_streak = max(self.stats.best_streak, self.stats.current_streak)
                     self.stats.landing_positions.append((self.vessel.x, self.vessel.y))
                     self.sound.play('success')
-                    self.particles.emit(
-                        self.vessel.x / self.echelle,
-                        self.fenY - self.vessel.y / self.echelle,
-                        'celebration', 100
-                    )
+                    self.particles.emit(px, py, 'celebration', 100)
                 else:
                     self.stats.total_crashes += 1
                     self.stats.current_streak = 0
                     self.stats.crash_positions.append((self.vessel.x, self.vessel.y))
                     self.sound.play('explosion')
-                    self.particles.emit(
-                        self.vessel.x / self.echelle,
-                        self.fenY - self.vessel.y / self.echelle,
-                        'explosion', 80
-                    )
+                    self.particles.emit(px, py, 'explosion', 80)
 
                 self.stats.reward_history.append(self.episode_reward)
                 self.stats.best_reward = max(self.stats.best_reward, self.episode_reward)
@@ -548,9 +545,9 @@ class MarsLanderPro:
 
         # Particules de propulsion
         if self.vessel.puissance > 0 and not self.vessel.detruit:
-            vx = self.vessel.x / self.echelle
-            vy = self.fenY - self.vessel.y / self.echelle
-            self.particles.emit(vx, vy + 15, 'flame', self.vessel.puissance * 2,
+            px = self.vessel.x * WINDOW_WIDTH / self.fenX
+            py = WINDOW_HEIGHT - (self.vessel.y * WINDOW_HEIGHT / self.fenY)
+            self.particles.emit(px, py + 15, 'flame', self.vessel.puissance * 2,
                               direction=math.radians(self.vessel.angle + 90),
                               spread=math.pi/6)
 
@@ -574,8 +571,9 @@ class MarsLanderPro:
 
         # Vaisseau
         if not self.vessel.detruit:
-            vx = self.vessel.x / self.echelle
-            vy = self.fenY - self.vessel.y / self.echelle
+            # Convertir en coordonnees ecran
+            vx = self.vessel.x * WINDOW_WIDTH / self.fenX
+            vy = WINDOW_HEIGHT - (self.vessel.y * WINDOW_HEIGHT / self.fenY)
             self.vessel_renderer.draw(
                 self.screen, vx, vy, self.vessel.angle,
                 self.vessel.puissance, damage=0, scale=1.2
@@ -597,35 +595,46 @@ class MarsLanderPro:
 
     def _draw_terrain(self):
         """Dessine le terrain"""
-        points = []
-        for i in range(len(self.surface.sol) - 1):
-            x = i
-            y = self.fenY - self.surface.sol[i]
-            points.append((x, y))
+        # Utiliser les points de la surface mars
+        terrain_points = []
+        for x, y in self.surface.mars_surface:
+            # Convertir en coordonnees ecran
+            screen_x = x * WINDOW_WIDTH / self.fenX
+            screen_y = WINDOW_HEIGHT - (y * WINDOW_HEIGHT / self.fenY)
+            terrain_points.append((screen_x, screen_y))
 
-        if len(points) > 1:
-            # Remplissage du terrain
-            terrain_points = points + [(self.fenX, self.fenY), (0, self.fenY)]
-            pygame.draw.polygon(self.screen, (60, 40, 30), terrain_points)
+        if len(terrain_points) > 1:
+            # Ajouter les coins pour le remplissage
+            fill_points = terrain_points + [(WINDOW_WIDTH, WINDOW_HEIGHT), (0, WINDOW_HEIGHT)]
+            pygame.draw.polygon(self.screen, (60, 40, 30), fill_points)
 
             # Contour
-            pygame.draw.lines(self.screen, (150, 100, 70), False, points, 3)
+            pygame.draw.lines(self.screen, (150, 100, 70), False, terrain_points, 3)
 
     def _draw_landing_zone(self):
         """Dessine la zone d'atterrissage"""
-        zone_start = self.surface.zone_atterissage[0]
-        zone_end = self.surface.zone_atterissage[1]
-        zone_y = self.fenY - self.surface.sol[int(zone_start)]
+        zone = self.surface.atterissage
+        if not zone:
+            return
+
+        # Coordonnees de la zone
+        zone_x1, zone_y = zone[0]
+        zone_x2, _ = zone[1]
+
+        # Convertir en coordonnees ecran
+        screen_x1 = zone_x1 * WINDOW_WIDTH / self.fenX
+        screen_x2 = zone_x2 * WINDOW_WIDTH / self.fenX
+        screen_y = WINDOW_HEIGHT - (zone_y * WINDOW_HEIGHT / self.fenY)
 
         # Zone verte pulsante
         pulse = (math.sin(time.time() * 3) + 1) / 2
         color = (int(50 + pulse * 50), int(200 + pulse * 55), int(100 + pulse * 50))
 
-        pygame.draw.line(self.screen, color, (zone_start, zone_y), (zone_end, zone_y), 5)
+        pygame.draw.line(self.screen, color, (screen_x1, screen_y), (screen_x2, screen_y), 5)
 
         # Marqueurs
-        for x in [zone_start, zone_end]:
-            pygame.draw.circle(self.screen, color, (int(x), int(zone_y)), 8)
+        for x in [screen_x1, screen_x2]:
+            pygame.draw.circle(self.screen, color, (int(x), int(screen_y)), 8)
 
     def _draw_ui(self):
         """Dessine l'interface"""
