@@ -290,6 +290,11 @@ class MarsLanderPro:
         toutes_actions = self.jeu.toutes_actions_possibles(self.vessel)
         self.ia_classic = IALearning(self.scenar, toutes_actions, alpha, gamma, epsilon, epsilon_decay, True)
 
+        # Initialisation des variables d'episode
+        self.episode_reward = 0
+        self.episode_steps = 0
+        self.terminal_time = None
+
         print("[Game] OK")
 
     def _reset_vessel(self):
