@@ -90,6 +90,97 @@ graphique_actif = True
 graphique_points = 100
 
 # =============================================================================
+# NOUVELLES FONCTIONNALITÉS (V2.0 - 20 Features)
+# =============================================================================
+
+# --- 1. Météorites dynamiques ---
+meteorites_actif = False
+meteorites_spawn_rate = 0.02  # Probabilité de spawn par frame
+meteorites_difficulte = 1.0   # Multiplicateur de difficulté
+
+# --- 2. Mode nuit et éclairage ---
+mode_nuit_actif = False
+nuit_obscurite = 200          # Niveau d'obscurité (0-255)
+nuit_spot_radius = 150        # Rayon du spot lumineux
+
+# --- 3. Planètes (gravités différentes) ---
+# Options: 'mars', 'moon', 'earth', 'europa', 'titan', 'venus'
+planete_actuelle = 'mars'
+
+# --- 4. Dégâts progressifs ---
+degats_progressifs_actif = False
+degats_multiplicateur = 1.0
+
+# --- 5. Zones d'atterrissage multiples ---
+zones_multiples_actif = False
+
+# --- 6. Deep Q-Network (DQN) ---
+# Utiliser DQN au lieu de Q-Table classique
+dqn_actif = False
+dqn_hidden_sizes = [128, 64]  # Tailles des couches cachées
+dqn_learning_rate = 0.001
+dqn_batch_size = 32
+dqn_memory_size = 10000
+
+# --- 7. Caméra dynamique ---
+camera_dynamique_actif = False
+camera_auto_zoom = True
+camera_zoom_min = 0.5
+camera_zoom_max = 2.0
+
+# --- 8. Mode Time Attack ---
+time_attack_actif = False
+
+# --- 9. Tempêtes de poussière ---
+tempetes_actif = False
+tempete_duree = 10.0          # Durée en secondes
+tempete_intensite = 0.7       # Intensité (0-1)
+tempete_probabilite = 0.05    # Probabilité de déclenchement
+
+# --- 10. Export GIF ---
+gif_export_actif = True
+gif_max_frames = 500
+gif_fps = 30
+
+# --- 11. Mode multijoueur local ---
+multijoueur_actif = False
+multijoueur_rounds = 5
+
+# --- 12. Système de missions ---
+missions_actif = False
+
+# --- 13. Stations de ravitaillement ---
+stations_fuel_actif = False
+stations_refuel_rate = 2.0    # Fuel par frame
+
+# --- 14. Algorithme génétique ---
+genetique_actif = False
+genetique_population = 50
+genetique_mutation_rate = 0.1
+
+# --- 15. Terrain destructible ---
+terrain_destructible_actif = False
+
+# --- 16. Power-ups ---
+powerups_actif = False
+powerups_spawn_rate = 0.005
+
+# --- 17. Brouillard de guerre ---
+brouillard_actif = False
+brouillard_reveal_radius = 100
+
+# --- 18. Mode survie ---
+survie_actif = False
+survie_vies_max = 3
+survie_landings_par_niveau = 3
+
+# --- 19. Éditeur de niveaux ---
+editeur_actif = True  # Toujours disponible avec touche E
+
+# --- 20. Dashboard statistiques ---
+dashboard_actif = True  # Toujours disponible avec touche D
+
+# =============================================================================
 # MODE DE FONCTIONNEMENT
 # =============================================================================
 
