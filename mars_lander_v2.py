@@ -50,6 +50,7 @@ import pygame
 
 # Imports locaux
 from data import *
+import data as data_module  # Pour pouvoir modifier les valeurs
 from vaisseau import Vaisseau
 from jeu import Jeu
 from affichage import Affichage
@@ -351,8 +352,8 @@ def main():
 
         # Toggle vent (V)
         if keys[pygame.K_v] and key_states[pygame.K_v]:
-            wind.enabled = not wind.enabled
-            message = f"Vent: {'ON' if wind.enabled else 'OFF'}"
+            data_module.data_module.vent_actif = not data_module.data_module.vent_actif
+            message = f"Vent: {'ON' if data_module.data_module.vent_actif else 'OFF'}"
             message_time = time.time()
             key_states[pygame.K_v] = False
         elif not keys[pygame.K_v]:
@@ -360,9 +361,8 @@ def main():
 
         # Toggle trajectoire (T)
         if keys[pygame.K_t] and key_states[pygame.K_t]:
-            import data
-            data.trajectoire_active = not data.trajectoire_active
-            message = f"Trajectoire: {'ON' if data.trajectoire_active else 'OFF'}"
+            data_module.trajectoire_active = not data_module.trajectoire_active
+            message = f"Trajectoire: {'ON' if data_module.trajectoire_active else 'OFF'}"
             message_time = time.time()
             key_states[pygame.K_t] = False
         elif not keys[pygame.K_t]:
@@ -593,7 +593,7 @@ def main():
             v.v_speed += (gravity_factor - 1) * 0.1  # Ajustement de gravité
 
             # Vent
-            if wind.enabled:
+            if data_module.data_module.vent_actif:
                 wind.update()
                 wind_force = wind.get_force()
                 v.h_speed += wind_force[0]
@@ -774,8 +774,8 @@ def main():
         a.ecrire_info(v, ia, j)
 
         # Trajectoire
-        if trajectoire_active:
-            vent_force = wind.get_force() if wind.enabled else (0, 0)
+        if data_module.trajectoire_active:
+            vent_force = wind.get_force() if data_module.vent_actif else (0, 0)
             a.dessiner_trajectoire(v, vent_force)
 
         # Vaisseau
@@ -793,7 +793,7 @@ def main():
             a.dessiner_graphique_apprentissage(ia)
 
         # Indicateur vent
-        if wind.enabled:
+        if data_module.data_module.vent_actif:
             a.dessiner_indicateur_vent(wind.get_force())
 
         # Météorites
