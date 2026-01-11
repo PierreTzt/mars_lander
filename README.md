@@ -1,9 +1,10 @@
-# Mars Lander IA - Q-Learning DELUXE EDITION
+# Mars Lander IA - ULTIMATE PRO EDITION
 
-Un simulateur d'atterrissage sur Mars avec une Intelligence Artificielle par apprentissage par renforcement (Q-Learning).
+Un simulateur d'atterrissage sur Mars avec une Intelligence Artificielle par apprentissage par renforcement.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Pygame](https://img.shields.io/badge/Pygame-2.0+-green.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## Description
@@ -22,6 +23,38 @@ Ce projet simule l'atterrissage d'un vaisseau spatial sur Mars. Une IA basee sur
 | **V2.0** | `mars_lander_v2.py` | 20 nouvelles fonctionnalites |
 | **Ultimate** | `mars_lander_ultimate.py` | Effets visuels avances, progression IA visible |
 | **Deluxe** | `mars_lander_deluxe.py` | Experience complete avec menu, achievements, heatmaps |
+| **PRO** | `mars_lander_pro.py` | **RECOMMANDE** - PyTorch DQN + Graphiques temps reel |
+
+## Edition PRO - ULTIMATE PRO (NOUVEAU!)
+
+L'edition PRO represente le summum du projet avec des technologies avancees:
+
+### PyTorch Deep Q-Network (DQN)
+- **Dueling DQN Architecture** : Separation valeur/avantage pour meilleur apprentissage
+- **Prioritized Experience Replay** : Les experiences importantes sont rejouees plus souvent
+- **Double DQN** : Reduction de la surestimation des Q-values
+- **Soft Target Updates** : Stabilite de l'entrainement
+- **Support GPU/CUDA** : Acceleration materielle si disponible
+
+### Graphiques Temps Reel (Matplotlib)
+- Courbe des recompenses avec moyenne mobile
+- Taux de succes en temps reel
+- Evolution de l'epsilon (exploration)
+- Heatmap des positions visitees
+- Distribution des actions
+- Loss et Q-values de l'entrainement
+
+### Graphismes Avances
+- **Fond spatial** avec nebuleuses procedurales et etoiles a parallax
+- **Systeme de particules** haute performance (5000+ particules)
+- **Terrain procedural** avec OpenSimplex noise
+- **Effets visuels** : glow, trails, explosions spectaculaires
+- **Rendu avance du vaisseau** avec flammes realistes
+
+### Packages requis pour la version PRO
+```bash
+pip install torch matplotlib moderngl opensimplex numba
+```
 
 ## Edition Deluxe - Experience Complete
 
@@ -106,25 +139,33 @@ L'edition Deluxe offre l'experience la plus complete :
 ### Installation des dependances
 
 ```bash
+# Version de base
 pip install pygame numpy
+
+# Version PRO (recommande)
+pip install pygame numpy torch matplotlib opensimplex numba
+
 # Optionnel pour l'export GIF:
-pip install Pillow
+pip install Pillow imageio
 ```
 
 ### Lancement
 
 ```bash
-# Version classique
-python mars_lander.py
+# Version PRO (RECOMMANDEE - PyTorch DQN + graphiques temps reel)
+python mars_lander_pro.py
 
-# Version 2.0 avec toutes les fonctionnalites
-python mars_lander_v2.py
+# Version Deluxe (menu, achievements, heatmaps)
+python mars_lander_deluxe.py
 
 # Version Ultimate (effets visuels avances)
 python mars_lander_ultimate.py
 
-# Version Deluxe (RECOMMANDEE - experience complete)
-python mars_lander_deluxe.py
+# Version 2.0 (20 fonctionnalites)
+python mars_lander_v2.py
+
+# Version classique
+python mars_lander.py
 ```
 
 ## Controles
@@ -205,17 +246,21 @@ mars_lander-main/
 ├── mars_lander.py          # Version classique
 ├── mars_lander_v2.py       # Version 2.0 avec 20 features
 ├── mars_lander_ultimate.py # Version avec effets visuels avances
-├── mars_lander_deluxe.py   # Version complete (RECOMMANDEE)
+├── mars_lander_deluxe.py   # Version complete avec menu/achievements
+├── mars_lander_pro.py      # Version PRO (RECOMMANDEE)
 ├── data.py                 # Configuration et constantes
 ├── vaisseau.py             # Physique du vaisseau
 ├── surface.py              # Terrain et zone d'atterrissage
 ├── jeu.py                  # Logique du jeu
 ├── ia_learning.py          # Algorithme Q-Learning
 ├── affichage.py            # Rendu graphique
-├── game_systems.py         # Nouveaux systemes de jeu
-├── advanced_ai.py          # DQN et algorithme genetique
+├── game_systems.py         # Systemes de jeu avances
+├── advanced_ai.py          # DQN numpy et algorithme genetique
 ├── extra_features.py       # Editeur, dashboard, GIF export
-├── historique/             # Sauvegardes Q-Table
+├── pytorch_ai.py           # PyTorch DQN (Dueling + PER)
+├── pro_graphics.py         # Graphismes avances (particules, nebuleuses)
+├── realtime_plots.py       # Graphiques matplotlib temps reel
+├── historique/             # Sauvegardes Q-Table et modeles PyTorch
 ├── achievements.json       # Sauvegarde des succes (auto-genere)
 └── README.md
 ```
@@ -300,6 +345,16 @@ Ce projet est sous licence MIT.
 - **Assistance IA** : Claude (Anthropic)
 - **Inspire par** : Le challenge CodinGame "Mars Lander"
 
+## Technologies utilisees
+
+- **Python 3.8+** - Langage principal
+- **Pygame** - Moteur de jeu et rendu
+- **PyTorch** - Deep Learning pour DQN
+- **NumPy** - Calculs numeriques
+- **Matplotlib** - Graphiques temps reel
+- **OpenSimplex** - Generation procedurale
+- **Numba** - Acceleration JIT
+
 ---
 
-*Fait avec Python et Pygame - DELUXE EDITION avec menu, achievements, heatmaps et effets visuels!*
+*Fait avec Python, Pygame et PyTorch - ULTIMATE PRO EDITION avec Deep Q-Network, graphiques temps reel et effets visuels spectaculaires!*
