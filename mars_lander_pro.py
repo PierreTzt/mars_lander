@@ -463,9 +463,9 @@ class MarsLanderPro:
                 # Mise a jour stats
                 success = self.vessel.est_pose
 
-                # Coordonnees ecran pour particules
+                # Coordonnees ecran pour particules (Y non inverse car monde Y=0 en haut)
                 px = self.vessel.x * WINDOW_WIDTH / self.fenX
-                py = WINDOW_HEIGHT - (self.vessel.y * WINDOW_HEIGHT / self.fenY)
+                py = self.vessel.y * WINDOW_HEIGHT / self.fenY
 
                 if success:
                     self.stats.total_landings += 1
@@ -551,7 +551,7 @@ class MarsLanderPro:
         # Particules de propulsion
         if self.vessel.puissance > 0 and not self.vessel.detruit:
             px = self.vessel.x * WINDOW_WIDTH / self.fenX
-            py = WINDOW_HEIGHT - (self.vessel.y * WINDOW_HEIGHT / self.fenY)
+            py = self.vessel.y * WINDOW_HEIGHT / self.fenY
             self.particles.emit(px, py + 15, 'flame', self.vessel.puissance * 2,
                               direction=math.radians(self.vessel.angle + 90),
                               spread=math.pi/6)
@@ -576,9 +576,9 @@ class MarsLanderPro:
 
         # Vaisseau
         if not self.vessel.detruit:
-            # Convertir en coordonnees ecran
+            # Convertir en coordonnees ecran (Y non inverse)
             vx = self.vessel.x * WINDOW_WIDTH / self.fenX
-            vy = WINDOW_HEIGHT - (self.vessel.y * WINDOW_HEIGHT / self.fenY)
+            vy = self.vessel.y * WINDOW_HEIGHT / self.fenY
             self.vessel_renderer.draw(
                 self.screen, vx, vy, self.vessel.angle,
                 self.vessel.puissance, damage=0, scale=1.2
@@ -603,13 +603,13 @@ class MarsLanderPro:
         # Utiliser les points de la surface mars
         terrain_points = []
         for x, y in self.surface.mars_surface:
-            # Convertir en coordonnees ecran
+            # Convertir en coordonnees ecran (Y non inverse)
             screen_x = x * WINDOW_WIDTH / self.fenX
-            screen_y = WINDOW_HEIGHT - (y * WINDOW_HEIGHT / self.fenY)
+            screen_y = y * WINDOW_HEIGHT / self.fenY
             terrain_points.append((screen_x, screen_y))
 
         if len(terrain_points) > 1:
-            # Ajouter les coins pour le remplissage
+            # Ajouter les coins pour le remplissage (du terrain vers le bas de l'ecran)
             fill_points = terrain_points + [(WINDOW_WIDTH, WINDOW_HEIGHT), (0, WINDOW_HEIGHT)]
             pygame.draw.polygon(self.screen, (60, 40, 30), fill_points)
 
@@ -626,10 +626,10 @@ class MarsLanderPro:
         zone_x1, zone_y = zone[0]
         zone_x2, _ = zone[1]
 
-        # Convertir en coordonnees ecran
+        # Convertir en coordonnees ecran (Y non inverse)
         screen_x1 = zone_x1 * WINDOW_WIDTH / self.fenX
         screen_x2 = zone_x2 * WINDOW_WIDTH / self.fenX
-        screen_y = WINDOW_HEIGHT - (zone_y * WINDOW_HEIGHT / self.fenY)
+        screen_y = zone_y * WINDOW_HEIGHT / self.fenY
 
         # Zone verte pulsante
         pulse = (math.sin(time.time() * 3) + 1) / 2
