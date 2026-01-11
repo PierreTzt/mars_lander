@@ -1,4 +1,4 @@
-# Mars Lander IA - Q-Learning V2.0
+# Mars Lander IA - Q-Learning DELUXE EDITION
 
 Un simulateur d'atterrissage sur Mars avec une Intelligence Artificielle par apprentissage par renforcement (Q-Learning).
 
@@ -8,27 +8,70 @@ Un simulateur d'atterrissage sur Mars avec une Intelligence Artificielle par app
 
 ## Description
 
-Ce projet simule l'atterrissage d'un vaisseau spatial sur Mars. Une IA basée sur l'algorithme Q-Learning apprend de manière autonome à faire atterrir le vaisseau en toute sécurité sur la zone d'atterrissage.
+Ce projet simule l'atterrissage d'un vaisseau spatial sur Mars. Une IA basee sur l'algorithme Q-Learning apprend de maniere autonome a faire atterrir le vaisseau en toute securite sur la zone d'atterrissage.
 
 ### Idee originale
 
 **Florent Lannois** - Concept et idee du projet
 
-## Fonctionnalites V2.0 (20 nouvelles features!)
+## Versions disponibles
 
-### Gameplay de base
-- **Simulation physique realiste** : Gravite, propulsion, inertie
-- **Q-Learning avec Experience Replay** : Apprentissage par renforcement optimise
-- **6 niveaux de difficulte** : Du facile a l'expert
-- **Systeme de replay** : Enregistrement des meilleures performances
+| Version | Fichier | Description |
+|---------|---------|-------------|
+| **Classique** | `mars_lander.py` | Version de base avec Q-Learning |
+| **V2.0** | `mars_lander_v2.py` | 20 nouvelles fonctionnalites |
+| **Ultimate** | `mars_lander_ultimate.py` | Effets visuels avances, progression IA visible |
+| **Deluxe** | `mars_lander_deluxe.py` | Experience complete avec menu, achievements, heatmaps |
 
-### Graphismes avances
-- Fond etoile avec scintillement
-- Arriere-plan martien avec degrade
-- Systeme de particules (flammes, explosions, poussiere)
-- Fusee dessinee proceduralement
+## Edition Deluxe - Experience Complete
 
-### 20 Nouvelles Fonctionnalites
+L'edition Deluxe offre l'experience la plus complete :
+
+### Menu Principal
+- Interface graphique intuitive
+- Boutons pour choisir le mode de jeu
+- Animation d'etoiles en arriere-plan
+
+### Systeme d'Achievements (17 succes)
+
+| Achievement | Description |
+|-------------|-------------|
+| Premier Atterrissage | Reussir son premier atterrissage |
+| 10 Atterrissages | Cumuler 10 atterrissages reussis |
+| 100 Atterrissages | Cumuler 100 atterrissages reussis |
+| Serie de 5 | 5 atterrissages consecutifs |
+| Serie de 10 | 10 atterrissages consecutifs |
+| Serie de 25 | 25 atterrissages consecutifs |
+| Atterrissage Parfait | Vitesse < 10 et angle = 0 |
+| Maitre du Vent | Atterrir avec le vent actif |
+| Explorateur Nocturne | Atterrir en mode nuit |
+| Esquive de Meteorite | Eviter 10 meteorites |
+| Survivant | Survivre 5 vagues en mode survie |
+| Econome | Atterrir avec > 50% de fuel |
+| Temoin de l'Aube | Jouer pendant 1 heure |
+| Explorateur | Visiter toutes les planetes |
+| Collectionneur | Ramasser 50 power-ups |
+| Precision Chirurgicale | 10 atterrissages sans crash |
+| Legendaire | Debloquer tous les achievements |
+
+### Heatmaps de Visualisation
+- Carte de chaleur des crashes (rouge)
+- Carte de chaleur des atterrissages (vert)
+- Visualisation de la progression de l'apprentissage
+
+### Systeme de Particules
+- Flammes de propulsion realistes
+- Explosions spectaculaires
+- Effets de celebration lors des succes
+- Poussiere a l'atterrissage
+
+### Statistiques en Temps Reel
+- Nombre total d'episodes
+- Taux de reussite
+- Meilleure serie consecutive
+- Temps de jeu
+
+## 20 Nouvelles Fonctionnalites (V2.0+)
 
 | # | Fonctionnalite | Description |
 |---|----------------|-------------|
@@ -76,6 +119,12 @@ python mars_lander.py
 
 # Version 2.0 avec toutes les fonctionnalites
 python mars_lander_v2.py
+
+# Version Ultimate (effets visuels avances)
+python mars_lander_ultimate.py
+
+# Version Deluxe (RECOMMANDEE - experience complete)
+python mars_lander_deluxe.py
 ```
 
 ## Controles
@@ -90,8 +139,9 @@ python mars_lander_v2.py
 | **P** | Pause/Reprise |
 | **+/-** | Ajuster la vitesse de simulation |
 | **F1-F6** | Changer de scenario (difficulte) |
+| **ESC** | Retour au menu (Deluxe) |
 
-### Nouvelles fonctionnalites (V2.0)
+### Fonctionnalites avancees
 
 | Touche | Action |
 |--------|--------|
@@ -107,10 +157,11 @@ python mars_lander_v2.py
 | **G** | Demarrer/Arreter enregistrement GIF |
 | **E** | Ouvrir l'editeur de niveaux |
 | **D** | Afficher le dashboard statistiques |
+| **H** | Afficher/Masquer heatmap (Deluxe) |
+| **A** | Afficher achievements (Deluxe) |
 | **F7** | Mode Time Attack on/off |
 | **F8** | Mode Survie on/off |
 | **F9** | Missions on/off |
-| **1-6** | Changer de planete |
 
 ## Configuration
 
@@ -151,18 +202,21 @@ dqn_actif = False
 
 ```
 mars_lander-main/
-├── mars_lander.py      # Version classique
-├── mars_lander_v2.py   # Version 2.0 avec 20 features
-├── data.py             # Configuration et constantes
-├── vaisseau.py         # Physique du vaisseau
-├── surface.py          # Terrain et zone d'atterrissage
-├── jeu.py              # Logique du jeu
-├── ia_learning.py      # Algorithme Q-Learning
-├── affichage.py        # Rendu graphique
-├── game_systems.py     # Nouveaux systemes de jeu
-├── advanced_ai.py      # DQN et algorithme genetique
-├── extra_features.py   # Editeur, dashboard, GIF export
-├── historique/         # Sauvegardes Q-Table
+├── mars_lander.py          # Version classique
+├── mars_lander_v2.py       # Version 2.0 avec 20 features
+├── mars_lander_ultimate.py # Version avec effets visuels avances
+├── mars_lander_deluxe.py   # Version complete (RECOMMANDEE)
+├── data.py                 # Configuration et constantes
+├── vaisseau.py             # Physique du vaisseau
+├── surface.py              # Terrain et zone d'atterrissage
+├── jeu.py                  # Logique du jeu
+├── ia_learning.py          # Algorithme Q-Learning
+├── affichage.py            # Rendu graphique
+├── game_systems.py         # Nouveaux systemes de jeu
+├── advanced_ai.py          # DQN et algorithme genetique
+├── extra_features.py       # Editeur, dashboard, GIF export
+├── historique/             # Sauvegardes Q-Table
+├── achievements.json       # Sauvegarde des succes (auto-genere)
 └── README.md
 ```
 
@@ -173,26 +227,34 @@ mars_lander-main/
 Q(s,a) = Q(s,a) + alpha x (r + gamma x max(Q(s',a')) - Q(s,a))
 ```
 
-- **s** : Etat actuel
-- **a** : Action effectuee
+- **s** : Etat actuel (position, vitesse, angle, fuel)
+- **a** : Action effectuee (angle, puissance)
 - **r** : Recompense recue
 - **s'** : Nouvel etat
-- **alpha** : Taux d'apprentissage
-- **gamma** : Facteur de discount
+- **alpha** : Taux d'apprentissage (0.1)
+- **gamma** : Facteur de discount (0.9)
+
+### Experience Replay
+
+L'IA stocke ses experiences passees et rejoue des mini-batches aleatoires pour :
+- Briser la correlation entre experiences consecutives
+- Stabiliser l'apprentissage
+- Reutiliser les experiences rares
 
 ### Deep Q-Network (DQN)
 
-La version 2.0 inclut un agent DQN qui utilise un reseau de neurones pour approximer la fonction Q. Avantages :
-- Meilleure generalisation
-- Gestion d'espaces d'etats continus
-- Experience Replay pour stabiliser l'apprentissage
+La version avancee utilise un reseau de neurones pour approximer la fonction Q :
+- Couche d'entree : 8 neurones (etat)
+- Couches cachees : 64 -> 64 neurones (ReLU)
+- Couche de sortie : actions possibles
 
 ### Algorithme Genetique
 
-Alternative au Q-Learning :
-- Population de "pilotes" avec des comportements differents
-- Selection naturelle des meilleurs
-- Croisement et mutation pour explorer de nouvelles strategies
+Alternative au Q-Learning basee sur l'evolution :
+- Population de 50 "pilotes" avec des poids aleatoires
+- Evaluation fitness basee sur la distance a la cible
+- Selection des meilleurs (top 20%)
+- Croisement et mutation pour la diversite
 
 ## Planetes disponibles
 
@@ -210,8 +272,22 @@ Alternative au Q-Learning :
 Pour un atterrissage reussi :
 - Etre dans la **zone d'atterrissage** (segment horizontal)
 - **Angle = 0 degres** (vaisseau horizontal)
-- **Vitesse verticale inferieure ou egale a 40** pixels/frame
-- **Vitesse horizontale inferieure ou egale a 20** pixels/frame
+- **Vitesse verticale <= 40** pixels/frame
+- **Vitesse horizontale <= 20** pixels/frame
+
+## Progression de l'IA
+
+L'IA commence avec un comportement aleatoire (epsilon = 0.8 = 80% aleatoire).
+Au fil des episodes, elle apprend et reduit son exploration :
+- Episode 1-100 : Exploration intense, nombreux crashes
+- Episode 100-500 : Apprentissage des bases
+- Episode 500-1000 : Amelioration du taux de reussite
+- Episode 1000+ : Maitrise et optimisation
+
+Visualisez la progression avec :
+- Les heatmaps (H) montrant l'evolution des zones de crash/atterrissage
+- Les statistiques en temps reel (taux de reussite, epsilon)
+- Le dashboard statistiques (D) pour les graphiques detailles
 
 ## Licence
 
@@ -220,9 +296,10 @@ Ce projet est sous licence MIT.
 ## Credits
 
 - **Idee originale** : Florent Lannois
-- **Developpement et ameliorations** : Projet collaboratif avec Claude AI
+- **Developpement** : Pierre Touzet
+- **Assistance IA** : Claude (Anthropic)
 - **Inspire par** : Le challenge CodinGame "Mars Lander"
 
 ---
 
-*Fait avec Python et Pygame - Version 2.0 avec 20 nouvelles fonctionnalites!*
+*Fait avec Python et Pygame - DELUXE EDITION avec menu, achievements, heatmaps et effets visuels!*
