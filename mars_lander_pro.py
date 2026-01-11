@@ -599,22 +599,20 @@ class MarsLanderPro:
         pygame.display.flip()
 
     def _draw_terrain(self):
-        """Dessine le terrain"""
-        # Utiliser les points de la surface mars
+        """Dessine le terrain martien"""
         terrain_points = []
         for x, y in self.surface.mars_surface:
-            # Conversion simple: coordonnees monde vers ecran
-            # y=0 est en haut dans les deux systemes
+            # Conversion monde -> ecran
             screen_x = x * WINDOW_WIDTH / self.fenX
             screen_y = y * WINDOW_HEIGHT / self.fenY
             terrain_points.append((screen_x, screen_y))
 
         if len(terrain_points) > 1:
-            # Ajouter les coins pour le remplissage (du terrain vers le bas de l'ecran)
+            # Remplissage du terrain jusqu'au bas de l'ecran
             fill_points = terrain_points + [(WINDOW_WIDTH, WINDOW_HEIGHT), (0, WINDOW_HEIGHT)]
-            pygame.draw.polygon(self.screen, (139, 90, 43), fill_points)  # Marron Mars
+            pygame.draw.polygon(self.screen, (139, 90, 43), fill_points)
 
-            # Contour plus visible
+            # Contour visible
             pygame.draw.lines(self.screen, (200, 150, 100), False, terrain_points, 4)
 
     def _draw_landing_zone(self):
