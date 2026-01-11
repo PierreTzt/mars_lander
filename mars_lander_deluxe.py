@@ -862,6 +862,10 @@ class Game:
         # Simulation
         self.clock.tick(current_speed)
 
+        # Initialisation des variables pour l'apprentissage
+        etat = None
+        ia_action = None
+
         if not self.vessel.detruit and not self.vessel.est_pose:
             # IA action
             etat = self.ia.recupere_etat(self.vessel, self.surface)
