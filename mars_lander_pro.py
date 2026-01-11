@@ -29,7 +29,8 @@ from data import fenX, fenY, echelle, alpha, gamma, epsilon, epsilon_decay
 from vaisseau import Vaisseau
 from surface import Surface
 from jeu import Jeu
-from affichage import Affichage
+# Note: Affichage n'est plus utilise dans la version PRO
+# from affichage import Affichage
 from ia_learning import IALearning
 
 # Imports des modules PRO
@@ -173,9 +174,15 @@ class MarsLanderPro:
     """
 
     def __init__(self):
+        print("")
         print("=" * 60)
         print("  MARS LANDER - ULTIMATE PRO EDITION")
         print("  PyTorch DQN + Graphiques Temps Reel")
+        print("=" * 60)
+        print("")
+        print("  Idee originale: Florent Lannois")
+        print("  En hommage a sa creativite et son inspiration")
+        print("")
         print("=" * 60)
 
         # Fenetre principale
@@ -279,12 +286,13 @@ class MarsLanderPro:
         self.vessel.init_vaisseau(self.scenar['vaisseau'])
 
         self.surface = Surface(self.scenar['surface_mars'])
-        self.affichage = Affichage()
         self.jeu = Jeu(self.scenar)
 
         # Zone d'atterrissage
         self.zone = self.surface.calcul_zone_atterissage(self.scenar)
-        self.affichage.init_terrain(self.scenar['surface_mars'], self.zone)
+
+        # Rectangle de collision du vaisseau (remplace affichage.rect)
+        self.vessel_rect = pygame.Rect(0, 0, 40, 40)
 
         # IA Q-Learning classique (backup)
         toutes_actions = self.jeu.toutes_actions_possibles(self.vessel)
@@ -425,7 +433,6 @@ class MarsLanderPro:
             self.scenar = self.scenarios[num]
             self.surface = Surface(self.scenar['surface_mars'])
             self.zone = self.surface.calcul_zone_atterissage(self.scenar)
-            self.affichage.init_terrain(self.scenar['surface_mars'], self.zone)
             self.jeu = Jeu(self.scenar)
             self._reset_vessel()
             print(f"[Game] Scenario {num + 1} charge")
@@ -434,6 +441,48 @@ class MarsLanderPro:
         """Redemarre un episode"""
         self._reset_vessel()
         self.stats.total_episodes += 1
+
+    def _check_collision(self):
+        """Detection de collision personnalisee (remplace touche_mars)"""
+        if self.vessel.detruit or self.vessel.est_pose:
+            return
+
+        # Position du vaisseau en coordonnees monde
+        vx, vy = self.vessel.x, self.vessel.y
+
+        # Verifier collision avec chaque segment du terrain
+        for i in range(len(self.surface.mars_surface) - 1):
+            x1, y1 = self.surface.mars_surface[i]
+            x2, y2 = self.surface.mars_surface[i + 1]
+
+            # Le vaisseau est-il horizontalement au-dessus de ce segment?
+            if x1 <= vx <= x2 or x2 <= vx <= x1:
+                # Interpoler la hauteur du terrain a cette position X
+                if x2 != x1:
+                    t = (vx - x1) / (x2 - x1)
+                    terrain_y = y1 + t * (y2 - y1)
+                else:
+                    terrain_y = y1
+
+                # Collision si le vaisseau est en dessous ou au niveau du terrain
+                if vy >= terrain_y - 20:  # 20 = marge de collision
+                    # Verifier si c'est un atterrissage reussi
+                    if (self.surface.est_dans_la_zone(self.vessel) and
+                        self.vessel.peut_atterir() and
+                        not self.vessel.detruit):
+                        # ATTERRISSAGE REUSSI
+                        self.jeu.est_gagne = True
+                        self.vessel.est_pose = True
+                        self.jeu.att_reussi += 1
+                    else:
+                        # CRASH
+                        self.jeu.est_gagne = False
+                        self.vessel.detruit = True
+
+                    # Arreter le vaisseau
+                    self.vessel.v_speed = 0
+                    self.vessel.h_speed = 0
+                    return
 
     def _save_model(self):
         """Sauvegarde le modele"""
@@ -513,11 +562,13 @@ class MarsLanderPro:
             if self.realtime_plots:
                 self.realtime_plots.log_action(action[0], action[1])
 
-        # Physique
-        self.jeu.actualisation(self.vessel, self.affichage, self.surface, self.ia_classic)
+        # Physique (actualisation ne depend pas d'affichage)
+        if not self.jeu.paused:
+            self.vessel.actualisation()
+            self.vessel.verif_si_HS()
 
-        # Detection collision
-        self.jeu.touche_mars(self.affichage, self.vessel, self.surface)
+        # Detection collision personnalisee
+        self._check_collision()
 
         # Nouvel etat et recompense
         next_state = self._get_state()
@@ -565,7 +616,18 @@ class MarsLanderPro:
         self.background.draw(self.screen)
 
         # Terrain
-        self._draw_terrain()
+        terrain_pts = []
+        for x, y in self.surface.mars_surface:
+            sx = x * WINDOW_WIDTH / self.fenX
+            sy = y * WINDOW_HEIGHT / self.fenY
+            terrain_pts.append((sx, sy))
+
+        if terrain_pts:
+            # Polygon de remplissage (couleur Mars)
+            fill_pts = terrain_pts + [(WINDOW_WIDTH, WINDOW_HEIGHT), (0, WINDOW_HEIGHT)]
+            pygame.draw.polygon(self.screen, (139, 90, 43), fill_pts)
+            # Contour du terrain
+            pygame.draw.lines(self.screen, (180, 120, 80), False, terrain_pts, 4)
 
         # Zone d'atterrissage
         self._draw_landing_zone()
@@ -576,7 +638,6 @@ class MarsLanderPro:
 
         # Vaisseau
         if not self.vessel.detruit:
-            # Convertir en coordonnees ecran (Y non inverse)
             vx = self.vessel.x * WINDOW_WIDTH / self.fenX
             vy = self.vessel.y * WINDOW_HEIGHT / self.fenY
             self.vessel_renderer.draw(
@@ -599,21 +660,17 @@ class MarsLanderPro:
         pygame.display.flip()
 
     def _draw_terrain(self):
-        """Dessine le terrain martien"""
+        """Dessine le terrain martien (methode alternative, non utilisee)"""
         terrain_points = []
         for x, y in self.surface.mars_surface:
-            # Conversion monde -> ecran
             screen_x = x * WINDOW_WIDTH / self.fenX
             screen_y = y * WINDOW_HEIGHT / self.fenY
             terrain_points.append((screen_x, screen_y))
 
         if len(terrain_points) > 1:
-            # Remplissage du terrain jusqu'au bas de l'ecran
             fill_points = terrain_points + [(WINDOW_WIDTH, WINDOW_HEIGHT), (0, WINDOW_HEIGHT)]
             pygame.draw.polygon(self.screen, (139, 90, 43), fill_points)
-
-            # Contour visible
-            pygame.draw.lines(self.screen, (200, 150, 100), False, terrain_points, 4)
+            pygame.draw.lines(self.screen, (180, 120, 80), False, terrain_points, 4)
 
     def _draw_landing_zone(self):
         """Dessine la zone d'atterrissage"""
@@ -767,7 +824,19 @@ class MarsLanderPro:
             self.realtime_plots.stop()
 
         pygame.quit()
-        print("[Game] Au revoir!")
+
+        # Message de fermeture avec hommage
+        print("")
+        print("=" * 60)
+        print("  Merci d'avoir joue a Mars Lander!")
+        print("")
+        print("  Ce projet est dedie a Florent Lannois,")
+        print("  dont l'idee originale a rendu tout cela possible.")
+        print("")
+        print("  Developpement: Pierre Touzet")
+        print("  Assistance IA: Claude (Anthropic)")
+        print("=" * 60)
+        print("")
 
 
 def main():

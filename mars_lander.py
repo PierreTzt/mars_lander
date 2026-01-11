@@ -20,7 +20,19 @@ CONTRÔLES:
 - +/-: Ajuster la vitesse de simulation
 
 AUTEUR: Projet amélioré avec Q-Learning et graphismes avancés
+
+NOTE: Ce fichier redirige vers la version PRO avec PyTorch DQN.
+Pour utiliser l'ancienne version, commentez le bloc ci-dessous.
 """
+
+# === REDIRECTION VERS LA VERSION PRO ===
+if __name__ == "__main__":
+    print("Redirection vers Mars Lander ULTIMATE PRO Edition...")
+    from mars_lander_pro import main as pro_main
+    pro_main()
+    import sys
+    sys.exit(0)
+# === FIN REDIRECTION ===
 
 import os
 import datetime
