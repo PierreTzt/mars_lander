@@ -352,8 +352,8 @@ def main():
 
         # Toggle vent (V)
         if keys[pygame.K_v] and key_states[pygame.K_v]:
-            data_module.data_module.vent_actif = not data_module.data_module.vent_actif
-            message = f"Vent: {'ON' if data_module.data_module.vent_actif else 'OFF'}"
+            data_module.vent_actif = not data_module.vent_actif
+            message = f"Vent: {'ON' if data_module.vent_actif else 'OFF'}"
             message_time = time.time()
             key_states[pygame.K_v] = False
         elif not keys[pygame.K_v]:
@@ -593,7 +593,7 @@ def main():
             v.v_speed += (gravity_factor - 1) * 0.1  # Ajustement de gravité
 
             # Vent
-            if data_module.data_module.vent_actif:
+            if data_module.vent_actif:
                 wind.update()
                 wind_force = wind.get_force()
                 v.h_speed += wind_force[0]
@@ -793,7 +793,7 @@ def main():
             a.dessiner_graphique_apprentissage(ia)
 
         # Indicateur vent
-        if data_module.data_module.vent_actif:
+        if data_module.vent_actif:
             a.dessiner_indicateur_vent(wind.get_force())
 
         # Météorites
