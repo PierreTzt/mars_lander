@@ -1,5 +1,10 @@
 # Mars Lander IA
 
+> [!WARNING]
+> **Projet arrêté.** Ce projet n'est plus développé ni maintenu, et les issues et pull requests risquent de rester sans réponse. Le code reste disponible sous licence MIT : n'hésitez pas à le forker pour le reprendre à votre compte.
+>
+> *This project is no longer maintained. Feel free to fork it.*
+
 Un simulateur d'atterrissage sur Mars où une intelligence artificielle apprend seule à poser le vaisseau, par apprentissage par renforcement (Q-Learning, puis Deep Q-Network avec PyTorch).
 
 *A Mars landing simulator where an AI learns to land by itself through reinforcement learning (tabular Q-Learning and a PyTorch Deep Q-Network). The code and comments are in French.*
@@ -123,9 +128,9 @@ scripts/            Outils de vérification
 saves/              Sauvegardes locales (créé au premier lancement)
 ```
 
-## Contribuer
+## Reprendre le projet
 
-Les contributions sont les bienvenues. Avant de proposer une modification :
+Le projet n'étant plus maintenu, le plus simple pour le faire évoluer est d'en faire un fork. Pour vérifier le code après une modification :
 
 ```bash
 pip install ruff
@@ -133,7 +138,7 @@ ruff check .
 python scripts/verifier_imports.py
 ```
 
-La CI GitHub lance ces mêmes vérifications sur chaque pull request.
+La CI GitHub (`.github/workflows/ci.yml`) lance ces mêmes vérifications.
 
 Quelques pistes d'amélioration :
 
