@@ -36,21 +36,19 @@ import math
 import random
 from typing import Dict, Tuple, List, Optional
 
-from data import (
-    fenX, fenY, echelle, img_par_sec, ia_active,
+from .data import (
+    fenX, fenY, echelle, ia_active,
     max_h_speed, max_v_speed,
     trajectoire_active, trajectoire_points,
     graphique_actif, graphique_points,
     vent_actif, gravite,
     # Couleurs de base
-    BLANC, NOIR, ROUGE, VERT, ORANGE, JAUNE,
-    # Couleurs spatiales
-    NOIR_ESPACE, ETOILE_DIM, ETOILE_MEDIUM, ETOILE_BRIGHT, ETOILE_BLEU, ETOILE_ROUGE,
+    BLANC, ETOILE_DIM, ETOILE_MEDIUM, ETOILE_BRIGHT, ETOILE_BLEU, ETOILE_ROUGE,
     # Mars
     MARS_CIEL_HAUT, MARS_CIEL_MILIEU, MARS_CIEL_BAS,
     MARS_SOL, MARS_SOL_CLAIR, MARS_SOL_SOMBRE, MARS_ROCHE, MARS_OMBRE,
     # Zone d'atterrissage
-    ZONE_ATTERRISSAGE, ZONE_ATTERRISSAGE_DIM, BALISE_LUMIERE,
+    ZONE_ATTERRISSAGE, BALISE_LUMIERE,
     # Flammes
     FLAMME_COEUR, FLAMME_INTERIEUR, FLAMME_MILIEU, FLAMME_EXTERIEUR,
     # Effets
@@ -150,21 +148,8 @@ class Particle:
         if not self.alive:
             return
 
-        # === CALCUL DU FONDU (FADE OUT) ===
-        # Alpha proportionnel à la durée de vie restante
-        # Particule neuve = 255 (opaque), mourante = 0 (transparent)
-        alpha = int(255 * (self.lifetime / self.max_lifetime))
-
         # Taille diminue aussi avec le temps (effet de dissipation)
         current_size = max(1, int(self.size * (self.lifetime / self.max_lifetime)))
-
-        # === GESTION DE LA COULEUR AVEC ALPHA ===
-        if len(self.color) == 3:
-            # Couleur RGB -> ajouter alpha
-            color_with_alpha = (*self.color, alpha)
-        else:
-            # Couleur RGBA -> prendre le minimum des alphas
-            color_with_alpha = (*self.color[:3], min(alpha, self.color[3]))
 
         # === DESSIN DE LA PARTICULE ===
         if current_size > 1:
@@ -245,7 +230,6 @@ class ParticleSystem:
         # Créer plusieurs particules (plus de puissance = plus de particules)
         for _ in range(power * 2):
             # Direction de la flamme avec légère dispersion aléatoire
-            spread = random.uniform(-0.3, 0.3)  # Angle de dispersion
             speed = random.uniform(2, 5) * power  # Vitesse proportionnelle à la puissance
 
             # Calcul des composantes de vitesse
@@ -1029,7 +1013,6 @@ class Affichage:
 
         # === PALETTE DE COULEURS ===
         BODY_WHITE = (240, 240, 250)    # Corps principal
-        BODY_GRAY = (180, 180, 190)
         BODY_DARK = (100, 100, 110)     # Tuyère
         WINDOW_BLUE = (100, 180, 255)   # Hublot
         WINDOW_DARK = (50, 100, 150)
@@ -1187,38 +1170,6 @@ class Affichage:
                 rotated = base_image
 
             self.image_cache[cache_key] = rotated
-
-        return self.image_cache[cache_key]
-
-    def get_cached_image(self, path: str, angle: float) -> pygame.Surface:
-        """
-        Charge et cache une image depuis un fichier (méthode legacy).
-
-        Conservée pour compatibilité avec d'éventuelles images externes.
-        Utilise la fusée procédurale comme fallback si le fichier n'existe pas.
-
-        Args:
-            path: Chemin du fichier image
-            angle: Angle de rotation
-
-        Returns:
-            Surface Pygame (chargée ou fallback)
-        """
-        angle_key = round(angle)
-        cache_key = (path, angle_key)
-
-        if cache_key not in self.image_cache:
-            try:
-                image = pygame.image.load(path).convert_alpha()
-                if angle != 0:
-                    image = pygame.transform.rotate(image, angle)
-                self.image_cache[cache_key] = image
-            except pygame.error:
-                # Fallback: utiliser la fusée procédurale
-                image = self.create_rocket_image(0, False, False)
-                if angle != 0:
-                    image = pygame.transform.rotate(image, angle)
-                self.image_cache[cache_key] = image
 
         return self.image_cache[cache_key]
 
@@ -1616,7 +1567,6 @@ class Affichage:
             # Dessiner des points espacés pour effet pointillé
             for i, point in enumerate(points):
                 if i % 3 == 0:  # Un point sur 3 pour effet pointillé
-                    alpha = int(200 * (1 - i / len(points)))  # Fondu progressif
                     pygame.draw.circle(self.screen, color, point, 2)
 
     # ==========================================================================

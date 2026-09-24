@@ -1,360 +1,155 @@
-# Mars Lander IA - ULTIMATE PRO EDITION
+# Mars Lander IA
 
-Un simulateur d'atterrissage sur Mars avec une Intelligence Artificielle par apprentissage par renforcement.
+Un simulateur d'atterrissage sur Mars où une intelligence artificielle apprend seule à poser le vaisseau, par apprentissage par renforcement (Q-Learning, puis Deep Q-Network avec PyTorch).
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Pygame](https://img.shields.io/badge/Pygame-2.0+-green.svg)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+*A Mars landing simulator where an AI learns to land by itself through reinforcement learning (tabular Q-Learning and a PyTorch Deep Q-Network). The code and comments are in French.*
 
-## Description
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![Pygame](https://img.shields.io/badge/Pygame-2-green.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2-red.svg)
+![Licence MIT](https://img.shields.io/badge/Licence-MIT-yellow.svg)
 
-Ce projet simule l'atterrissage d'un vaisseau spatial sur Mars. Une IA basee sur l'algorithme Q-Learning apprend de maniere autonome a faire atterrir le vaisseau en toute securite sur la zone d'atterrissage.
+![Version PRO en début d'entraînement](docs/capture-pro.png)
 
-### Idee originale
-
-**Florent Lannois** - Concept et idee du projet
-
-## Versions disponibles
-
-| Version | Fichier | Description |
-|---------|---------|-------------|
-| **Classique** | `mars_lander.py` | Version de base avec Q-Learning |
-| **V2.0** | `mars_lander_v2.py` | 20 nouvelles fonctionnalites |
-| **Ultimate** | `mars_lander_ultimate.py` | Effets visuels avances, progression IA visible |
-| **Deluxe** | `mars_lander_deluxe.py` | Experience complete avec menu, achievements, heatmaps |
-| **PRO** | `mars_lander_pro.py` | **RECOMMANDE** - PyTorch DQN + Graphiques temps reel |
-
-## Edition PRO - ULTIMATE PRO (NOUVEAU!)
-
-L'edition PRO represente le summum du projet avec des technologies avancees:
-
-### PyTorch Deep Q-Network (DQN)
-- **Dueling DQN Architecture** : Separation valeur/avantage pour meilleur apprentissage
-- **Prioritized Experience Replay** : Les experiences importantes sont rejouees plus souvent
-- **Double DQN** : Reduction de la surestimation des Q-values
-- **Soft Target Updates** : Stabilite de l'entrainement
-- **Support GPU/CUDA** : Acceleration materielle si disponible
-
-### Graphiques Temps Reel (Matplotlib)
-- Courbe des recompenses avec moyenne mobile
-- Taux de succes en temps reel
-- Evolution de l'epsilon (exploration)
-- Heatmap des positions visitees
-- Distribution des actions
-- Loss et Q-values de l'entrainement
-
-### Graphismes Avances
-- **Fond spatial** avec nebuleuses procedurales et etoiles a parallax
-- **Systeme de particules** haute performance (5000+ particules)
-- **Terrain procedural** avec OpenSimplex noise
-- **Effets visuels** : glow, trails, explosions spectaculaires
-- **Rendu avance du vaisseau** avec flammes realistes
-
-### Packages requis pour la version PRO
-```bash
-pip install torch matplotlib moderngl opensimplex numba
-```
-
-## Edition Deluxe - Experience Complete
-
-L'edition Deluxe offre l'experience la plus complete :
-
-### Menu Principal
-- Interface graphique intuitive
-- Boutons pour choisir le mode de jeu
-- Animation d'etoiles en arriere-plan
-
-### Systeme d'Achievements (17 succes)
-
-| Achievement | Description |
-|-------------|-------------|
-| Premier Atterrissage | Reussir son premier atterrissage |
-| 10 Atterrissages | Cumuler 10 atterrissages reussis |
-| 100 Atterrissages | Cumuler 100 atterrissages reussis |
-| Serie de 5 | 5 atterrissages consecutifs |
-| Serie de 10 | 10 atterrissages consecutifs |
-| Serie de 25 | 25 atterrissages consecutifs |
-| Atterrissage Parfait | Vitesse < 10 et angle = 0 |
-| Maitre du Vent | Atterrir avec le vent actif |
-| Explorateur Nocturne | Atterrir en mode nuit |
-| Esquive de Meteorite | Eviter 10 meteorites |
-| Survivant | Survivre 5 vagues en mode survie |
-| Econome | Atterrir avec > 50% de fuel |
-| Temoin de l'Aube | Jouer pendant 1 heure |
-| Explorateur | Visiter toutes les planetes |
-| Collectionneur | Ramasser 50 power-ups |
-| Precision Chirurgicale | 10 atterrissages sans crash |
-| Legendaire | Debloquer tous les achievements |
-
-### Heatmaps de Visualisation
-- Carte de chaleur des crashes (rouge)
-- Carte de chaleur des atterrissages (vert)
-- Visualisation de la progression de l'apprentissage
-
-### Systeme de Particules
-- Flammes de propulsion realistes
-- Explosions spectaculaires
-- Effets de celebration lors des succes
-- Poussiere a l'atterrissage
-
-### Statistiques en Temps Reel
-- Nombre total d'episodes
-- Taux de reussite
-- Meilleure serie consecutive
-- Temps de jeu
-
-## 20 Nouvelles Fonctionnalites (V2.0+)
-
-| # | Fonctionnalite | Description |
-|---|----------------|-------------|
-| 1 | **Meteorites dynamiques** | Obstacles qui tombent du ciel, l'IA doit apprendre a les eviter |
-| 2 | **Mode nuit + eclairage** | Visibilite reduite avec un spot lumineux sur le vaisseau |
-| 3 | **Plusieurs planetes** | Lune, Mars, Terre, Europa, Titan, Venus avec gravites differentes |
-| 4 | **Degats progressifs** | Le vaisseau peut subir des dommages partiels avant destruction |
-| 5 | **Zones d'atterrissage multiples** | Plusieurs cibles avec recompenses differentes |
-| 6 | **Deep Q-Network (DQN)** | Reseau de neurones au lieu de Q-Table classique |
-| 7 | **Camera dynamique** | Zoom/dezoom automatique qui suit le vaisseau |
-| 8 | **Mode Time Attack** | Chronometre + classement des meilleurs temps |
-| 9 | **Tempetes de poussiere** | Reduction de visibilite + perturbations |
-| 10 | **Export GIF** | Enregistrer les meilleurs atterrissages en GIF anime |
-| 11 | **Mode multijoueur local** | 2 vaisseaux en meme temps, course a l'atterrissage |
-| 12 | **Systeme de missions** | Objectifs varies avec recompenses |
-| 13 | **Stations de ravitaillement** | Plateformes en vol pour recuperer du carburant |
-| 14 | **Algorithme genetique** | Evolution de populations de pilotes |
-| 15 | **Terrain destructible** | Les crashes creent des crateres |
-| 16 | **Power-ups** | Bonus a collecter : bouclier, fuel, ralenti temporel |
-| 17 | **Brouillard de guerre** | Le terrain se revele progressivement |
-| 18 | **Mode survie** | Atterrissages successifs avec difficulte croissante, 3 vies |
-| 19 | **Editeur de niveaux** | Creer ses propres terrains avec la souris |
-| 20 | **Dashboard statistiques** | Graphiques detailles de l'apprentissage |
+Idée originale : **Florent Lannois**. Inspiré du puzzle [Mars Lander](https://www.codingame.com/training/medium/mars-lander-episode-2) de CodinGame.
 
 ## Installation
 
-### Prerequis
-
-- Python 3.8 ou superieur
-- pip (gestionnaire de paquets Python)
-
-### Installation des dependances
+Python 3.10 ou plus récent.
 
 ```bash
-# Version de base
-pip install pygame numpy
-
-# Version PRO (recommande)
-pip install pygame numpy torch matplotlib opensimplex numba
-
-# Optionnel pour l'export GIF:
-pip install Pillow imageio
+git clone https://github.com/PierreTzt/mars_lander.git
+cd mars_lander
+python -m venv .venv
+source .venv/bin/activate        # Windows : .venv\Scripts\activate
+pip install -r requirements-pro.txt
 ```
 
-### Lancement
+`requirements-pro.txt` installe PyTorch, nécessaire à la version PRO. Pour les autres versions seulement, `requirements.txt` suffit (pygame, numpy, Pillow).
+
+## Lancer le jeu
 
 ```bash
-# Version PRO (RECOMMANDEE - PyTorch DQN + graphiques temps reel)
-python mars_lander_pro.py
-
-# Version Deluxe (menu, achievements, heatmaps)
-python mars_lander_deluxe.py
-
-# Version Ultimate (effets visuels avances)
-python mars_lander_ultimate.py
-
-# Version 2.0 (20 fonctionnalites)
-python mars_lander_v2.py
-
-# Version classique
-python mars_lander.py
+python lancer.py            # version PRO
+python lancer.py deluxe     # ou : classique, v2, ultimate
 ```
 
-## Controles
+| Version | Ce qu'elle apporte |
+|---------|--------------------|
+| `pro` (recommandée) | Deep Q-Network PyTorch, graphiques d'apprentissage en temps réel, rendu soigné |
+| `classique` | Q-Learning avec table, la version d'origine |
+| `v2` | 20 fonctionnalités : planètes, météorites, mode nuit, algorithme génétique, éditeur de niveaux... |
+| `ultimate` | Effets visuels avancés, progression de l'IA visible |
+| `deluxe` | Menu, 17 succès à débloquer, cartes de chaleur des crashs et atterrissages |
 
-### Controles de base
+Les versions sont indépendantes : chacune a sa propre boucle de jeu, mais toutes partagent le moteur du dossier `lander/`.
 
-| Touche | Action |
-|--------|--------|
-| **ESPACE** | Redemarrer la simulation |
-| **Fleches gauche/droite** | Rotation du vaisseau (mode manuel) |
-| **1-5** | Puissance des moteurs (mode manuel) |
-| **P** | Pause/Reprise |
-| **+/-** | Ajuster la vitesse de simulation |
-| **F1-F6** | Changer de scenario (difficulte) |
-| **ESC** | Retour au menu (Deluxe) |
+## Commandes
 
-### Fonctionnalites avancees
+| Touche | Action | Versions |
+|--------|--------|----------|
+| Espace | Relancer un épisode | toutes |
+| + / - | Vitesse de simulation | toutes |
+| P | Pause | toutes sauf `deluxe` |
+| F1 à F6 | Changer de scénario (terrain) | `pro`, `classique`, `v2` |
+| Échap | Quitter (retour au menu dans `deluxe`) | `pro`, `ultimate`, `deluxe` |
 
-| Touche | Action |
-|--------|--------|
-| **S** | Sons on/off |
-| **V** | Vent on/off |
-| **T** | Trajectoire predictive on/off |
-| **N** | Mode nuit on/off |
-| **M** | Meteorites on/off |
-| **B** | Brouillard de guerre on/off |
-| **C** | Camera dynamique on/off |
-| **O** | Declencher une tempete |
-| **U** | Power-ups on/off |
-| **G** | Demarrer/Arreter enregistrement GIF |
-| **E** | Ouvrir l'editeur de niveaux |
-| **D** | Afficher le dashboard statistiques |
-| **H** | Afficher/Masquer heatmap (Deluxe) |
-| **A** | Afficher achievements (Deluxe) |
-| **F7** | Mode Time Attack on/off |
-| **F8** | Mode Survie on/off |
-| **F9** | Missions on/off |
+Version `pro` : **G** ouvre les graphiques temps réel, **T** bascule entre DQN et Q-Learning, **D** affiche le panneau de debug, **S** sauvegarde le modèle.
+
+Version `classique` : quand `ia_active = False` dans `lander/data.py`, on pilote avec les flèches (rotation) et 1 à 5 (puissance). **V** active le vent, **T** la trajectoire prédite, **S** les sons.
+
+Version `v2` : la liste complète des touches s'affiche dans la console au lancement (sons, vent, nuit, météorites, brouillard, caméra, tempêtes, power-ups, export GIF, éditeur, tableau de bord, modes Time Attack / Survie / Missions, choix de la planète avec 1 à 6).
+
+Version `deluxe` : **H** affiche les cartes de chaleur.
+
+## Comment l'IA apprend
+
+À chaque image, l'agent observe l'état du vaisseau, choisit une action (un angle entre -90° et +90° et une puissance de 0 à 4), puis reçoit une récompense : positive s'il se rapproche de la zone d'atterrissage ou s'y pose en douceur, négative s'il s'en éloigne ou s'écrase.
+
+Un atterrissage réussit si le vaisseau touche la zone plate avec un angle nul, une vitesse verticale inférieure ou égale à 40 et une vitesse horizontale inférieure ou égale à 20.
+
+**Q-Learning (versions classique, ultimate, deluxe)** : l'état est discrétisé et l'agent remplit une table de valeurs Q avec l'équation de Bellman :
+
+```
+Q(s, a) ← Q(s, a) + α · (r + γ · max Q(s', a') − Q(s, a))
+```
+
+**Deep Q-Network (version PRO)** : un réseau de neurones remplace la table et prend en entrée l'état continu (position, vitesses, carburant, angle, distance à la zone). Il combine :
+
+- une architecture *Dueling*, qui sépare la valeur de l'état et l'avantage de chaque action ;
+- le *Double DQN*, qui limite la surestimation des valeurs Q ;
+- un replay prioritaire, qui rejoue plus souvent les expériences où l'erreur est grande ;
+- une mise à jour douce du réseau cible, pour stabiliser l'entraînement.
+
+L'exploration (epsilon) part de 0,9 et diminue à chaque épisode : l'agent agit surtout au hasard pendant les premières centaines d'épisodes, puis exploite ce qu'il a appris. Utilisez **+** pour accélérer la simulation.
+
+**Algorithme génétique (version v2)** : une population de « pilotes » est évaluée, les meilleurs sont croisés et mutés à chaque génération.
+
+## Sauvegardes
+
+Tout ce que le jeu enregistre va dans `saves/`, qui n'est pas suivi par git :
+
+- `qtable_<date>.pkl` : la Q-table, rechargée au lancement suivant (la plus récente est gardée) ;
+- `pytorch_model.pth` : le modèle de la version PRO ;
+- `achievements.json`, `dqn_model.pkl`, `genetic_population.pkl`, GIF exportés...
+
+Supprimez le dossier pour repartir de zéro.
 
 ## Configuration
 
-Le fichier `data.py` permet de configurer toutes les fonctionnalites :
+`lander/data.py` regroupe les réglages : hyperparamètres du Q-Learning (`alpha`, `gamma`, `epsilon`, `epsilon_decay`), mode IA ou manuel (`ia_active`), scénarios de terrain, et activation des fonctionnalités de la v2 (`meteorites_actif`, `mode_nuit_actif`, `planete_actuelle`, etc.).
 
-### Mode de jeu
-```python
-ia_active = True  # True = IA, False = Manuel
-```
-
-### Hyperparametres Q-Learning
-```python
-alpha = 0.1          # Taux d'apprentissage
-gamma = 0.9          # Facteur de discount
-epsilon = 0.8        # Taux d'exploration initial
-epsilon_decay = 0.99991  # Decroissance de l'exploration
-```
-
-### Nouvelles fonctionnalites
-```python
-# Meteorites
-meteorites_actif = False
-meteorites_spawn_rate = 0.02
-
-# Mode nuit
-mode_nuit_actif = False
-
-# Planete (moon, mars, earth, europa, titan, venus)
-planete_actuelle = 'mars'
-
-# Deep Q-Network
-dqn_actif = False
-
-# Et bien plus...
-```
-
-## Architecture du projet
+## Structure du projet
 
 ```
-mars_lander-main/
-├── mars_lander.py          # Version classique
-├── mars_lander_v2.py       # Version 2.0 avec 20 features
-├── mars_lander_ultimate.py # Version avec effets visuels avances
-├── mars_lander_deluxe.py   # Version complete avec menu/achievements
-├── mars_lander_pro.py      # Version PRO (RECOMMANDEE)
-├── data.py                 # Configuration et constantes
-├── vaisseau.py             # Physique du vaisseau
-├── surface.py              # Terrain et zone d'atterrissage
-├── jeu.py                  # Logique du jeu
-├── ia_learning.py          # Algorithme Q-Learning
-├── affichage.py            # Rendu graphique
-├── game_systems.py         # Systemes de jeu avances
-├── advanced_ai.py          # DQN numpy et algorithme genetique
-├── extra_features.py       # Editeur, dashboard, GIF export
-├── pytorch_ai.py           # PyTorch DQN (Dueling + PER)
-├── pro_graphics.py         # Graphismes avances (particules, nebuleuses)
-├── realtime_plots.py       # Graphiques matplotlib temps reel
-├── historique/             # Sauvegardes Q-Table et modeles PyTorch
-├── achievements.json       # Sauvegarde des succes (auto-genere)
-└── README.md
+lancer.py           Point d'entrée : python lancer.py <version>
+versions/           Les 5 versions jouables (une boucle de jeu chacune)
+lander/             Moteur partagé
+  data.py             Configuration, scénarios, constantes
+  vaisseau.py         Physique du vaisseau
+  surface.py          Terrain et zone d'atterrissage
+  jeu.py              Règles, collisions, actions possibles
+  affichage.py        Rendu pygame (fond, HUD, particules)
+  common.py           Vent, sons, replays
+  ia_learning.py      Agent Q-Learning
+  pytorch_ai.py       Agent DQN PyTorch (version PRO)
+  advanced_ai.py      DQN en numpy, algorithme génétique, planètes (v2)
+  game_systems.py     Météorites, dégâts, caméra, power-ups... (v2)
+  extra_features.py   Éditeur de niveaux, tableau de bord, export GIF (v2)
+  pro_graphics.py     Nébuleuses, particules, terrain procédural (PRO)
+  realtime_plots.py   Graphiques matplotlib en temps réel (PRO)
+  paths.py            Emplacement du dossier saves/
+scripts/            Outils de vérification
+saves/              Sauvegardes locales (créé au premier lancement)
 ```
 
-## Algorithme Q-Learning
+## Contribuer
 
-### Equation de Bellman
+Les contributions sont les bienvenues. Avant de proposer une modification :
+
+```bash
+pip install ruff
+ruff check .
+python scripts/verifier_imports.py
 ```
-Q(s,a) = Q(s,a) + alpha x (r + gamma x max(Q(s',a')) - Q(s,a))
-```
 
-- **s** : Etat actuel (position, vitesse, angle, fuel)
-- **a** : Action effectuee (angle, puissance)
-- **r** : Recompense recue
-- **s'** : Nouvel etat
-- **alpha** : Taux d'apprentissage (0.1)
-- **gamma** : Facteur de discount (0.9)
+La CI GitHub lance ces mêmes vérifications sur chaque pull request.
 
-### Experience Replay
+Quelques pistes d'amélioration :
 
-L'IA stocke ses experiences passees et rejoue des mini-batches aleatoires pour :
-- Briser la correlation entre experiences consecutives
-- Stabiliser l'apprentissage
-- Reutiliser les experiences rares
+- **Physique plus fidèle à CodinGame** : l'angle et la puissance changent instantanément, alors que le puzzle d'origine limite les variations à ±15° et ±1 par tour.
+- **Récompenses du DQN** : l'atterrissage rapporte jusqu'à +1 800 alors que les récompenses intermédiaires sont de l'ordre de ±1 ; les normaliser devrait stabiliser l'apprentissage.
+- **Fonctionnalités de la v2 pas encore branchées** : le multijoueur local et les zones d'atterrissage multiples existent dans `lander/game_systems.py` mais ne sont pas reliés à la boucle de jeu.
+- **Code dupliqué** : les versions ont chacune leur boucle et leur HUD ; une partie pourrait être mise en commun dans `lander/`.
+- **Traduction** : le code et les commentaires sont en français.
 
-### Deep Q-Network (DQN)
+## Crédits
 
-La version avancee utilise un reseau de neurones pour approximer la fonction Q :
-- Couche d'entree : 8 neurones (etat)
-- Couches cachees : 64 -> 64 neurones (ReLU)
-- Couche de sortie : actions possibles
-
-### Algorithme Genetique
-
-Alternative au Q-Learning basee sur l'evolution :
-- Population de 50 "pilotes" avec des poids aleatoires
-- Evaluation fitness basee sur la distance a la cible
-- Selection des meilleurs (top 20%)
-- Croisement et mutation pour la diversite
-
-## Planetes disponibles
-
-| Planete | Gravite (m/s2) | Description |
-|---------|---------------|-------------|
-| Lune | 1.62 | Tres faible gravite, pas d'atmosphere |
-| Mars | 3.72 | Gravite faible, atmosphere tenue |
-| Terre | 9.81 | Gravite standard, atmosphere dense |
-| Europa | 1.31 | Surface glacee, tres faible gravite |
-| Titan | 1.35 | Atmosphere tres dense, vents forts |
-| Venus | 8.87 | Gravite forte, pression ecrasante |
-
-## Conditions d'atterrissage
-
-Pour un atterrissage reussi :
-- Etre dans la **zone d'atterrissage** (segment horizontal)
-- **Angle = 0 degres** (vaisseau horizontal)
-- **Vitesse verticale <= 40** pixels/frame
-- **Vitesse horizontale <= 20** pixels/frame
-
-## Progression de l'IA
-
-L'IA commence avec un comportement aleatoire (epsilon = 0.8 = 80% aleatoire).
-Au fil des episodes, elle apprend et reduit son exploration :
-- Episode 1-100 : Exploration intense, nombreux crashes
-- Episode 100-500 : Apprentissage des bases
-- Episode 500-1000 : Amelioration du taux de reussite
-- Episode 1000+ : Maitrise et optimisation
-
-Visualisez la progression avec :
-- Les heatmaps (H) montrant l'evolution des zones de crash/atterrissage
-- Les statistiques en temps reel (taux de reussite, epsilon)
-- Le dashboard statistiques (D) pour les graphiques detailles
+- Idée originale : Florent Lannois
+- Développement : Pierre Touzet
+- Assistance IA : Claude (Anthropic)
+- Inspiré par le puzzle Mars Lander de CodinGame
 
 ## Licence
 
-Ce projet est sous licence MIT.
-
-## Credits
-
-- **Idee originale** : Florent Lannois
-- **Developpement** : Pierre Touzet
-- **Assistance IA** : Claude (Anthropic)
-- **Inspire par** : Le challenge CodinGame "Mars Lander"
-
-## Technologies utilisees
-
-- **Python 3.8+** - Langage principal
-- **Pygame** - Moteur de jeu et rendu
-- **PyTorch** - Deep Learning pour DQN
-- **NumPy** - Calculs numeriques
-- **Matplotlib** - Graphiques temps reel
-- **OpenSimplex** - Generation procedurale
-- **Numba** - Acceleration JIT
-
----
-
-*Fait avec Python, Pygame et PyTorch - ULTIMATE PRO EDITION avec Deep Q-Network, graphiques temps reel et effets visuels spectaculaires!*
+[MIT](LICENSE)

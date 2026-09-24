@@ -41,36 +41,34 @@ Contrôles:
 - 1-6: Changer de planète
 """
 
-import os
-import sys
 import time
-import random
 import math
 import pygame
 
 # Imports locaux
-from data import *
-import data as data_module  # Pour pouvoir modifier les valeurs
-from vaisseau import Vaisseau
-from jeu import Jeu
-from affichage import Affichage
-from surface import Surface
-from ia_learning import IALearning
+from lander.data import *
+from lander import data as data_module  # Pour pouvoir modifier les valeurs
+from lander.vaisseau import Vaisseau
+from lander.jeu import Jeu
+from lander.affichage import Affichage
+from lander.surface import Surface
+from lander.ia_learning import IALearning
 
 # Import des nouveaux systèmes
-from game_systems import (
+from lander.game_systems import (
     MeteoriteSystem, DamageSystem, PowerUpSystem, FuelStationSystem,
-    MultiZoneSystem, NightModeSystem, DustStormSystem, FogOfWarSystem,
+    NightModeSystem, DustStormSystem, FogOfWarSystem,
     DynamicCamera, TimeAttackMode, SurvivalMode, MissionSystem
 )
-from advanced_ai import DQNAgent, GeneticAlgorithm, PlanetSystem
-from extra_features import (
+from lander.advanced_ai import DQNAgent, GeneticAlgorithm, PlanetSystem
+from lander.extra_features import (
     DestructibleTerrain, MultiplayerMode, ScreenRecorder,
     LevelEditor, StatsDashboard
 )
 
 # Import du système de vent et sons de la version 1
-from mars_lander import WindSystem, SoundManager, ReplaySystem
+from lander.common import WindSystem, SoundManager, ReplaySystem
+from lander.paths import chemin_sauvegarde
 
 
 def print_help():
@@ -174,9 +172,6 @@ def main():
     # 4. Dégâts progressifs
     damage_system = DamageSystem()
     damage_system.enabled = degats_progressifs_actif
-
-    # 5. Zones multiples
-    multi_zones = MultiZoneSystem()
 
     # 6. DQN
     dqn_agent = None
@@ -412,8 +407,8 @@ def main():
         if keys[pygame.K_g] and key_states[pygame.K_g]:
             if recorder.recording:
                 recorder.stop_recording()
-                if recorder.export_gif("mars_landing.gif"):
-                    message = "GIF exporté: mars_landing.gif"
+                if recorder.export_gif(chemin_sauvegarde("mars_landing.gif")):
+                    message = "GIF exporté: saves/mars_landing.gif"
                 else:
                     message = "Export GIF échoué"
             else:
@@ -783,7 +778,6 @@ def main():
 
         # Surface
         if destructible_terrain.enabled:
-            modified_surface = destructible_terrain.get_modified_surface()
             # Note: Il faudrait redessiner avec la surface modifiée
             destructible_terrain.draw_craters(screen)
         a.dessiner_surface(s.mars_surface)
@@ -861,10 +855,10 @@ def main():
 
     # Sauvegarde
     if dqn_actif and dqn_agent:
-        dqn_agent.save("dqn_model.pkl")
+        dqn_agent.save()
         print("Modèle DQN sauvegardé")
     if genetique_actif and genetic:
-        genetic.save("genetic_population.pkl")
+        genetic.save()
         print("Population génétique sauvegardée")
 
     pygame.quit()

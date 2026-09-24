@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installer les dépendances
+        run: |
+          pip install ruff
+          pip install -r requirements-pro.txt --extra-index-url https://download.pytorch.org/whl/cpu
+      - name: Lint
+        run: ruff check .
+      - name: Importer tous les modules
+        run: python scripts/verifier_imports.py
+      - name: Tester l'agent DQN
+        run: python -m lander.pytorch_ai

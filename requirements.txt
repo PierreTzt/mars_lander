@@ -1,2 +1,4 @@
-pygame>=2.1.0
-numpy>=1.21.0
+# Versions classique, v2, ultimate et deluxe
+pygame>=2.1
+numpy>=1.21
+Pillow>=9.0  # export GIF (version v2)

@@ -20,26 +20,26 @@ import math
 import time
 import random
 import numpy as np
-from typing import Optional, Tuple
+from typing import Tuple
 
 # Imports des modules du projet
-import data as data_module
-from data import scenario0, scenario1, scenario2, scenario3, scenario4, scenario5
-from data import fenX, fenY, echelle, alpha, gamma, epsilon, epsilon_decay
-from vaisseau import Vaisseau
-from surface import Surface
-from jeu import Jeu
+from lander.data import scenario0, scenario1, scenario2, scenario3, scenario4, scenario5
+from lander.data import fenX, fenY, echelle, alpha, gamma, epsilon, epsilon_decay
+from lander.vaisseau import Vaisseau
+from lander.surface import Surface
+from lander.jeu import Jeu
 # Note: Affichage n'est plus utilise dans la version PRO
 # from affichage import Affichage
-from ia_learning import IALearning
+from lander.ia_learning import IALearning
 
 # Imports des modules PRO
-from pytorch_ai import PyTorchDQNAgent
-from pro_graphics import (
+from lander.pytorch_ai import PyTorchDQNAgent
+from lander.pro_graphics import (
     SpaceBackground, AdvancedParticleSystem, AdvancedVesselRenderer,
     ProceduralTerrain, PostProcessor, SmoothCamera
 )
-from realtime_plots import RealtimeLearningPlots, LearningProgressBar
+from lander.realtime_plots import RealtimeLearningPlots, LearningProgressBar
+from lander.paths import chemin_sauvegarde
 
 # Configuration
 pygame.init()
@@ -251,12 +251,12 @@ class MarsLanderPro:
             gamma=0.99,
             epsilon_start=0.9,
             epsilon_end=0.01,
-            epsilon_decay=0.9997,
+            epsilon_decay=0.995,  # par episode : ~900 episodes pour atteindre 0.01
             batch_size=64
         )
 
         # Tentative de chargement d'un modele existant
-        self.pytorch_agent.load("historique/pytorch_model.pth")
+        self.pytorch_agent.load(chemin_sauvegarde("pytorch_model.pth"))
 
         print(f"[AI] PyTorch device: {self.pytorch_agent.get_stats()['device']}")
         print("[AI] OK")
@@ -402,7 +402,6 @@ class MarsLanderPro:
 
             # Indication pour skip
             if progress > 0.5:
-                skip_alpha = int(128 * math.sin(elapsed * 4))
                 skip_text = font_small.render("Appuyez sur une touche pour continuer...", True, (150, 150, 150))
                 skip_rect = skip_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 80))
                 self.screen.blit(skip_text, skip_rect)
@@ -451,7 +450,6 @@ class MarsLanderPro:
 
         # Position par rapport a la zone
         x = self.vessel.x
-        y = self.vessel.y
         zone = self.surface.atterissage
         zone_x1 = zone[0][0]
         zone_x2 = zone[1][0]
@@ -591,7 +589,7 @@ class MarsLanderPro:
 
     def _save_model(self):
         """Sauvegarde le modele"""
-        self.pytorch_agent.save("historique/pytorch_model.pth")
+        self.pytorch_agent.save(chemin_sauvegarde("pytorch_model.pth"))
         # Note: ia_classic n'a pas de methode save_q_table dans cette version
         print("[Save] Modele PyTorch sauvegarde")
 
@@ -610,9 +608,11 @@ class MarsLanderPro:
             if self.terminal_time is None:
                 self.terminal_time = time.time()
 
-                # Calcul recompense finale
-                final_reward = self._calculate_reward()
-                self.episode_reward += final_reward
+                # La recompense finale a deja ete comptee a l'etape ou l'episode s'est termine
+
+                # Fin d'episode : l'exploration decroit une fois par episode
+                if self.use_pytorch:
+                    self.pytorch_agent.decay_epsilon()
 
                 # Mise a jour stats
                 success = self.vessel.est_pose
@@ -685,7 +685,6 @@ class MarsLanderPro:
         if self.use_pytorch:
             self.pytorch_agent.store_experience(state, action, reward, next_state, done)
             self.pytorch_agent.train_step()
-            self.pytorch_agent.decay_epsilon()
 
             # Log loss et Q-value
             if self.realtime_plots:
@@ -695,7 +694,7 @@ class MarsLanderPro:
                 if stats['avg_q'] != 0:
                     self.realtime_plots.log_qvalue(stats['avg_q'])
         else:
-            q_state = self.ia_classic.recupere_etat(self.vessel, self.surface)
+            # q_state a ete calcule avant l'action ; seul le nouvel etat est a recuperer
             q_next_state = self.ia_classic.recupere_etat(self.vessel, self.surface)
             self.ia_classic.update_q_table(q_state, action, reward, q_next_state, done)
             self.ia_classic.decay_epsilon()
@@ -820,7 +819,7 @@ class MarsLanderPro:
         # Infos
         y_offset = 40
         infos = [
-            (f"Altitude: {self.vessel.y / self.echelle:.0f} m", COLORS['text']),
+            (f"Altitude: {self.surface.atterissage[0][1] - self.vessel.y:.0f} m", COLORS['text']),
             (f"H-Speed: {self.vessel.h_speed:.1f} m/s", COLORS['warning'] if abs(self.vessel.h_speed) > 20 else COLORS['success']),
             (f"V-Speed: {self.vessel.v_speed:.1f} m/s", COLORS['danger'] if self.vessel.v_speed < -40 else COLORS['success']),
             (f"Fuel: {self.vessel.fuel:.0f} L", COLORS['danger'] if self.vessel.fuel < 200 else COLORS['text']),
@@ -882,7 +881,7 @@ class MarsLanderPro:
         if self.use_pytorch:
             stats = self.pytorch_agent.get_stats()
             info = [
-                f"Mode: PyTorch DQN",
+                "Mode: PyTorch DQN",
                 f"Device: {stats['device']}",
                 f"Epsilon: {stats['epsilon']:.4f}",
                 f"Buffer: {stats['buffer_size']}",
@@ -891,7 +890,7 @@ class MarsLanderPro:
             ]
         else:
             info = [
-                f"Mode: Q-Learning",
+                "Mode: Q-Learning",
                 f"Epsilon: {self.ia_classic.epsilon:.4f}",
                 f"Q-Table: {len(self.ia_classic.q_table)} etats",
             ]

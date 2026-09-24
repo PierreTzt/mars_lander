@@ -18,6 +18,8 @@ from typing import List, Tuple, Dict, Optional, Any
 from dataclasses import dataclass, field
 from collections import deque
 
+from .paths import chemin_sauvegarde
+
 
 # =============================================================================
 # 13. TERRAIN DESTRUCTIBLE
@@ -227,7 +229,6 @@ class MultiplayerMode:
 
         for player in self.players:
             # Fond coloré
-            bg_rect = pygame.Rect(10, y_offset, 200, 50)
             bg_surface = pygame.Surface((200, 50), pygame.SRCALPHA)
             bg_surface.fill((*player.color, 100))
             screen.blit(bg_surface, (10, y_offset))
@@ -269,7 +270,7 @@ class ScreenRecorder:
 
         # Vérifier si PIL est disponible
         try:
-            from PIL import Image
+            from PIL import Image  # noqa: F401 (test de disponibilité)
             self.pil_available = True
         except ImportError:
             self.pil_available = False
@@ -294,7 +295,7 @@ class ScreenRecorder:
             frame = screen.copy()
             self.frames.append(frame)
 
-    def export_gif(self, filename: str = "landing.gif", scale: float = 0.5) -> bool:
+    def export_gif(self, filename: str = chemin_sauvegarde("landing.gif"), scale: float = 0.5) -> bool:
         """
         Exporte l'enregistrement en GIF.
 
@@ -350,7 +351,7 @@ class ScreenRecorder:
             print(f"Erreur lors de l'export GIF: {e}")
             return False
 
-    def export_images(self, folder: str = "frames") -> bool:
+    def export_images(self, folder: str = chemin_sauvegarde("frames")) -> bool:
         """Exporte les frames en images PNG."""
         if not self.frames:
             return False
@@ -488,7 +489,7 @@ class LevelEditor:
 
         # Sauvegarder sur disque
         try:
-            with open('custom_levels.pkl', 'wb') as f:
+            with open(chemin_sauvegarde('custom_levels.pkl'), 'wb') as f:
                 pickle.dump(self.saved_levels, f)
             return f"Niveau '{name}' sauvegardé!"
         except Exception as e:
@@ -497,8 +498,8 @@ class LevelEditor:
     def load_levels(self) -> int:
         """Charge les niveaux sauvegardés."""
         try:
-            if os.path.exists('custom_levels.pkl'):
-                with open('custom_levels.pkl', 'rb') as f:
+            if os.path.exists(chemin_sauvegarde('custom_levels.pkl')):
+                with open(chemin_sauvegarde('custom_levels.pkl'), 'rb') as f:
                     self.saved_levels = pickle.load(f)
                 return len(self.saved_levels)
         except:

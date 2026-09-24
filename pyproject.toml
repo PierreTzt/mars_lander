@@ -1,0 +1,8 @@
+[tool.ruff]
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+# Erreurs réelles uniquement : imports inutilisés, noms indéfinis, variables mortes...
+# Les versions utilisent `from lander.data import *`, d'où F403/F405 ignorés.
+select = ["F", "E9"]
+ignore = ["F403", "F405"]

@@ -48,21 +48,30 @@ CONCEPTS CLÉS DU Q-LEARNING:
    - Améliore la stabilité de l'apprentissage
 """
 
-import random
+import datetime
+import glob
 import os
 import pickle
+import random
 from collections import deque
 from typing import Tuple, List, Dict, Optional, Any
 
 import numpy as np
 
 # Import des paramètres de configuration
-from data import (
-    alpha, gamma, epsilon, epsilon_decay,  # Hyperparamètres Q-Learning
+from .data import (
     charger_historique, vider_historique,  # Gestion de l'historique
-    max_h_speed, max_v_speed, fenX, fenY,  # Paramètres du jeu
     bonus_fuel_actif, bonus_fuel_mult      # Bonus carburant
 )
+from .paths import chemin_sauvegarde
+
+# Les Q-tables sont sauvegardées dans saves/qtable_<date>.pkl
+PREFIXE_QTABLE = "qtable_"
+
+
+def fichiers_qtable() -> List[str]:
+    """Liste les Q-tables sauvegardées, de la plus ancienne à la plus récente."""
+    return sorted(glob.glob(chemin_sauvegarde(f"{PREFIXE_QTABLE}*.pkl")))
 
 
 class IALearning:
@@ -179,56 +188,52 @@ class IALearning:
 
     def recupere_historique(self) -> None:
         """
-        Charge la Q-table depuis le dernier fichier d'historique.
+        Charge la Q-table la plus récente depuis saves/.
 
         Permet de reprendre l'apprentissage d'une session précédente
         au lieu de recommencer de zéro. La Q-table contient toutes
         les connaissances accumulées par l'agent.
-
-        Les fichiers sont stockés dans: historique/*.pkl
         """
         if not self.ia_active:
             return
 
         # Charger seulement si demandé et si la Q-table est vide
         if charger_historique and len(self.q_table) == 0:
-            # Créer le dossier s'il n'existe pas
-            if not os.path.exists("historique"):
-                os.makedirs("historique")
-                return
-
-            # Récupérer la liste des fichiers
-            fichiers = os.listdir("historique")
-            if len(fichiers) > 0:
-                # Prendre le dernier fichier (le plus récent par nom)
-                fichier_historique = fichiers[-1]
+            fichiers = fichiers_qtable()
+            if fichiers:
                 try:
-                    with open(f"historique/{fichier_historique}", "rb") as f:
+                    with open(fichiers[-1], "rb") as f:
                         self.q_table = pickle.load(f)
                     print(f"Q-table chargée: {len(self.q_table)} états")
-                except (FileNotFoundError, pickle.PickleError) as e:
+                except (OSError, pickle.PickleError) as e:
                     print(f"Erreur lors du chargement de l'historique: {e}")
 
     def supprimer_historique(self) -> None:
         """
-        Supprime les fichiers d'historique existants.
+        Supprime les anciennes Q-tables pour éviter qu'elles s'accumulent.
 
-        Appelé après le chargement pour éviter d'accumuler
-        trop de fichiers dans le dossier historique.
+        La plus récente est conservée : si le jeu s'arrête sans sauvegarder,
+        l'apprentissage n'est pas perdu.
         """
-        if not self.ia_active:
+        if not self.ia_active or not vider_historique:
             return
 
-        if vider_historique:
-            if not os.path.exists("historique"):
-                return
+        for fichier in fichiers_qtable()[:-1]:
+            try:
+                os.remove(fichier)
+            except OSError as e:
+                print(f"Erreur lors de la suppression: {e}")
 
-            fichiers = os.listdir("historique")
-            for f in fichiers:
-                try:
-                    os.remove(f"historique/{f}")
-                except OSError as e:
-                    print(f"Erreur lors de la suppression: {e}")
+    def sauvegarde_historique(self) -> None:
+        """Sauvegarde la Q-table dans saves/qtable_<date>.pkl."""
+        horodatage = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        fichier = chemin_sauvegarde(f"{PREFIXE_QTABLE}{horodatage}.pkl")
+        try:
+            with open(fichier, "wb") as f:
+                pickle.dump(self.q_table, f)
+            print(f"Q-table sauvegardée: {fichier}")
+        except OSError as e:
+            print(f"Erreur lors de la sauvegarde: {e}")
 
     # ==========================================================================
     # CHOIX D'ACTION (STRATÉGIE EPSILON-GREEDY)

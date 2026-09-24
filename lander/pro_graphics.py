@@ -10,10 +10,9 @@ Effets visuels spectaculaires avec:
 """
 
 import pygame
-import numpy as np
 import math
 import random
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 from opensimplex import OpenSimplex
 
 # Tentative d'import numba pour acceleration
@@ -573,7 +572,6 @@ class AdvancedVesselRenderer:
         exhaust_pos = self._rotate_point(0, size//2 + 5, angle, x, y)
 
         # Direction de la flamme (opposee a l'angle)
-        flame_angle = math.radians(angle + 180)
 
         # Longueur selon la puissance
         flame_length = (10 + power * 8) * scale

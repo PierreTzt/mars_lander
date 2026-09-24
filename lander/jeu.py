@@ -17,16 +17,16 @@ La classe Jeu fait le lien entre:
 """
 
 import pygame
-from typing import List, Tuple, Optional, Any
+from typing import List, Tuple, Optional
 
 # Import des constantes de configuration
-from data import (
+from .data import (
     ia_active,          # Mode IA ou manuel
     degres_par_tour,    # Rotation par appui de touche (15°)
     angle_vaisseau_max, # Angle maximum (±90°)
     echelle             # Facteur d'échelle pour l'affichage
 )
-from vaisseau import Vaisseau
+from .vaisseau import Vaisseau
 
 
 class Jeu:
@@ -246,7 +246,7 @@ class Jeu:
         Gère les entrées clavier du joueur.
 
         Note: Cette méthode est définie mais la gestion clavier
-        est principalement faite dans mars_lander.py.
+        est principalement faite dans les versions (dossier versions/).
 
         Args:
             keys: État des touches du clavier (pygame.key.get_pressed())

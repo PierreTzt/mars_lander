@@ -1,0 +1,6 @@
+# Version PRO : PyTorch DQN + graphiques temps réel
+-r requirements.txt
+torch>=2.0
+matplotlib>=3.5
+opensimplex>=0.4
+# Optionnel, accélère les graphismes : numba
