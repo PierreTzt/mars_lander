@@ -127,7 +127,6 @@ class MeteoriteSystem:
                     trail_x = m.x - m.vx * (i + 1) * 3
                     trail_y = m.y - m.vy * (i + 1) * 2
                     trail_radius = m.radius * (0.5 - i * 0.1)
-                    alpha = 150 - i * 40
                     pygame.draw.circle(screen, trail_color, (int(trail_x), int(trail_y)), int(trail_radius))
 
 

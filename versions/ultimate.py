@@ -7,8 +7,6 @@ Effets visuels avances, feedback immediat, et progression visible.
 Par Florent Lannois (idee originale) & Claude AI
 """
 
-import os
-import sys
 import time
 import random
 import math
@@ -16,14 +14,14 @@ import pygame
 from collections import deque
 
 # Imports locaux
-from data import *
-import data as data_module
-from vaisseau import Vaisseau
-from jeu import Jeu
-from affichage import Affichage
-from surface import Surface
-from ia_learning import IALearning
-from mars_lander import WindSystem, SoundManager
+from lander.data import *
+from lander import data as data_module
+from lander.vaisseau import Vaisseau
+from lander.jeu import Jeu
+from lander.affichage import Affichage
+from lander.surface import Surface
+from lander.ia_learning import IALearning
+from lander.common import WindSystem, SoundManager
 
 
 # =============================================================================
@@ -464,7 +462,6 @@ class LandingTrail:
             x2, y2 = int(p2['x'] / echelle), int(p2['y'] / echelle)
 
             # Fade out progressif
-            alpha = int(255 * (i / len(points_list)))
 
             pygame.draw.line(screen, color, (x1, y1), (x2, y2), 1)
 
@@ -489,7 +486,6 @@ def main():
     # Polices
     font_small = pygame.font.Font(None, 18)
     font = pygame.font.Font(None, 24)
-    font_large = pygame.font.Font(None, 36)
     font_title = pygame.font.Font(None, 48)
 
     # Composants de base
@@ -689,7 +685,6 @@ def main():
         # =================================================================
 
         # Offset de tremblement
-        shake_offset = screen_shake.get_offset()
 
         # Fond noir avec etoiles
         screen.fill((5, 5, 15))

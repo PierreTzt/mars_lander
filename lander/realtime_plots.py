@@ -15,11 +15,14 @@ matplotlib.use('TkAgg')  # Backend pour affichage interactif
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.gridspec import GridSpec
-import matplotlib.patches as mpatches
 import numpy as np
 from collections import deque
+from typing import TYPE_CHECKING
 import threading
 import queue
+
+if TYPE_CHECKING:
+    import pygame
 import time
 
 
@@ -162,7 +165,8 @@ class RealtimeLearningPlots:
         plt.tight_layout()
 
         # Animation
-        ani = FuncAnimation(
+        # Garder une reference, sinon l'animation est detruite par le ramasse-miettes
+        self._animation = FuncAnimation(
             self.fig, self._update_plots,
             interval=self.update_interval,
             blit=False, cache_frame_data=False
@@ -258,7 +262,6 @@ class RealtimeLearningPlots:
                 self.total_crashes += 1
 
             # Calcul taux de succes mobile
-            recent = list(self.rewards_history)[-100:]
             success_rate = (self.total_landings / max(1, self.total_episodes)) * 100
             self.success_history.append(success_rate)
 

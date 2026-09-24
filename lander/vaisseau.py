@@ -35,7 +35,7 @@ import math
 from typing import Dict, Any
 
 # Import des constantes de configuration
-from data import (
+from .data import (
     fenX, fenY,           # Dimensions du monde
     gravite,              # Force de gravité
     max_h_speed,          # Vitesse horizontale max pour atterrir

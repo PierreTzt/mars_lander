@@ -112,7 +112,7 @@ degats_progressifs_actif = False
 degats_multiplicateur = 1.0
 
 # --- 5. Zones d'atterrissage multiples ---
-zones_multiples_actif = False
+zones_multiples_actif = False  # Pas encore branché (voir MultiZoneSystem)
 
 # --- 6. Deep Q-Network (DQN) ---
 # Utiliser DQN au lieu de Q-Table classique
@@ -143,7 +143,7 @@ gif_max_frames = 500
 gif_fps = 30
 
 # --- 11. Mode multijoueur local ---
-multijoueur_actif = False
+multijoueur_actif = False  # Pas encore branché : le système n'est ni mis à jour ni dessiné
 multijoueur_rounds = 5
 
 # --- 12. Système de missions ---
@@ -194,8 +194,8 @@ ia_active = True
 # - False: Recommence l'apprentissage de zéro
 charger_historique = True
 
-# Supprimer les fichiers d'historique après chargement
-# - True: Nettoie le dossier historique
+# Supprimer les anciennes Q-tables après chargement (la plus récente est gardée)
+# - True: Nettoie saves/qtable_*.pkl
 # - False: Conserve tous les fichiers
 vider_historique = True
 

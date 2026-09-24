@@ -13,9 +13,11 @@ import numpy as np
 import random
 import pickle
 import os
-from typing import List, Tuple, Dict, Optional, Any
+from typing import List, Tuple, Dict, Any
 from collections import deque
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
+from .paths import chemin_sauvegarde
 
 
 # =============================================================================
@@ -281,11 +283,11 @@ class DQNAgent:
         """Décroissance de epsilon."""
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
-    def save(self, filepath: str = "dqn_model.pkl") -> None:
+    def save(self, filepath: str = chemin_sauvegarde("dqn_model.pkl")) -> None:
         """Sauvegarde l'agent."""
         self.model.save(filepath)
 
-    def load(self, filepath: str = "dqn_model.pkl") -> bool:
+    def load(self, filepath: str = chemin_sauvegarde("dqn_model.pkl")) -> bool:
         """Charge l'agent."""
         if self.model.load(filepath):
             self.target_model.copy_weights_from(self.model)
@@ -533,7 +535,7 @@ class GeneticAlgorithm:
         """Retourne le meilleur génome."""
         return max(self.population, key=lambda g: g.fitness)
 
-    def save(self, filepath: str = "genetic_population.pkl") -> None:
+    def save(self, filepath: str = chemin_sauvegarde("genetic_population.pkl")) -> None:
         """Sauvegarde la population."""
         data = {
             'population': [(g.id, g.weights.tolist(), g.fitness, g.age, g.landings)
@@ -545,7 +547,7 @@ class GeneticAlgorithm:
         with open(filepath, 'wb') as f:
             pickle.dump(data, f)
 
-    def load(self, filepath: str = "genetic_population.pkl") -> bool:
+    def load(self, filepath: str = chemin_sauvegarde("genetic_population.pkl")) -> bool:
         """Charge la population."""
         if os.path.exists(filepath):
             with open(filepath, 'rb') as f:

@@ -11,29 +11,28 @@ CARTE BLANCHE - AUCUNE LIMITE!
 """
 
 import os
-import sys
 import time
 import random
 import math
-import pickle
 import json
 from collections import deque
-from dataclasses import dataclass, field
-from typing import List, Tuple, Dict, Optional, Any
+from dataclasses import dataclass
+from typing import List, Tuple, Dict, Optional
 from enum import Enum
 
 import pygame
 import numpy as np
 
 # Imports locaux
-from data import *
-import data as data_module
-from vaisseau import Vaisseau
-from jeu import Jeu
-from affichage import Affichage
-from surface import Surface
-from ia_learning import IALearning
-from mars_lander import WindSystem, SoundManager
+from lander.data import *
+from lander import data as data_module
+from lander.vaisseau import Vaisseau
+from lander.jeu import Jeu
+from lander.affichage import Affichage
+from lander.surface import Surface
+from lander.ia_learning import IALearning
+from lander.common import WindSystem, SoundManager
+from lander.paths import chemin_sauvegarde
 
 
 # =============================================================================
@@ -142,7 +141,7 @@ class AchievementSystem:
         """Sauvegarde les achievements."""
         data = {aid: ach.unlocked for aid, ach in self.achievements.items()}
         try:
-            with open('achievements.json', 'w') as f:
+            with open(chemin_sauvegarde('achievements.json'), 'w') as f:
                 json.dump(data, f)
         except:
             pass
@@ -150,8 +149,8 @@ class AchievementSystem:
     def load(self):
         """Charge les achievements."""
         try:
-            if os.path.exists('achievements.json'):
-                with open('achievements.json', 'r') as f:
+            if os.path.exists(chemin_sauvegarde('achievements.json')):
+                with open(chemin_sauvegarde('achievements.json'), 'r') as f:
                     data = json.load(f)
                 for aid, unlocked in data.items():
                     if aid in self.achievements:
@@ -438,7 +437,6 @@ class ProgressBar:
         # Remplissage
         fill_width = int(self.rect.width * self.value)
         if fill_width > 0:
-            fill_rect = pygame.Rect(self.rect.x, self.rect.y, fill_width, self.rect.height)
 
             # Gradient effect
             for i in range(fill_width):
@@ -522,10 +520,8 @@ class MainMenu:
 
         # Titre avec effet de lueur
         title_text = "MARS LANDER"
-        title_size = 1 + 0.05 * math.sin(self.title_pulse)
 
         # Lueur
-        glow_surf = fonts['title'].render(title_text, True, Colors.NEON_BLUE)
         for offset in range(3, 0, -1):
             alpha = 50 // offset
             glow = fonts['title'].render(title_text, True, (*Colors.NEON_BLUE[:3], alpha))
